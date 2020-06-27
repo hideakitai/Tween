@@ -12,29 +12,77 @@ namespace tween {
 class Timeline : public PollingTimer
 {
     Map<void*, SequenceRef> seqs;
+    Setting setting;
 
 public:
 
-    template <typename EasingType = Ease::Linear, typename T, typename U>
-    auto add(T& target, const U& to, const int32_t in)
-    -> typename std::enable_if<std::is_convertible<U, T>::value, Sequence<T>&>::type
+    template <typename T>
+    Sequence<T>& add(T& target)
     {
-        auto p = make_shared<Sequence<T>>(target, to, in, EasingType());
-        seqs.insert(make_pair((void*)&target, (SequenceRef)p));
-        return *p;
+        if (seqs.find(&target) != seqs.end())
+            return this->Timeline::operator[](target);
+        else
+        {
+            auto p = make_shared<Sequence<T>>(target);
+            seqs.insert(make_pair((void*)&target, (SequenceRef)p));
+            return *p;
+        }
     }
 
-    void update()
+    bool update()
     {
-        if (!isRunning()) return;
-        for (auto& s : seqs)
-            s.second->update(msec());
+        if (!isRunning()) return false;
+
+        float ms = msec();
+
+        auto it = seqs.begin();
+        while (it != seqs.end())
+        {
+            if (setting.duration < it->second->duration())
+                setting.duration = it->second->duration();
+
+            const bool done = !it->second->update(msec());
+            if (done)
+                it = seqs.erase(it);
+            else
+                ++it;
+        }
+
+        if (ms > setting.duration) {
+            switch (setting.mode)
+            {
+                case Mode::ONCE: clear();   return false;
+                case Mode::LOOP: restart(); return true;
+                default:                    return false;
+            }
+        }
+        else
+        {
+            return true;
+        }
     }
 
     void clear()
     {
+        for (auto& s : seqs) s.second->update(s.second->duration());
         seqs.clear();
         PollingTimer::stop();
+    }
+
+    void mode(const Mode m) { setting.mode = m; }
+    Mode mode() const { return setting.mode; }
+
+    size_t size() const { return seqs.size(); }
+
+    template <typename T>
+    const Sequence<T>& operator[] (const T& t)
+    {
+        return *(Sequence<T>*)(seqs[(void*)&t].get());
+    }
+    template <typename T>
+    Sequence<T>& operator[] (T& t)
+    {
+        return *(Sequence<T>*)(seqs[(void*)&t].get());
     }
 };
 

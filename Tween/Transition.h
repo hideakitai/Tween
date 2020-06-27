@@ -48,7 +48,7 @@ namespace transition
         {
             if (t < 0)
                 ref = from;
-            else if (t > duration_ms)
+            else if (t >= duration_ms)
                 ref = to;
             else
             {

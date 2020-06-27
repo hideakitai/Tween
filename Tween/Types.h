@@ -24,6 +24,19 @@
 namespace ht {
 namespace tween {
 
+    enum class Mode : uint8_t
+    {
+        ONCE, // do once and clear after finished
+        LOOP, // loop current timeline after finished
+        SAVE  // store current timeline with no loop
+    };
+
+    struct Setting
+    {
+        Mode mode {Mode::ONCE};
+        uint32_t duration {0};
+    };
+
 #ifdef HT_TWEEN_STL_DISABLED
     template <typename T, typename U> using Map = arx::map<T, U>;
     template <typename T> using Vec = arx::vector<T>;

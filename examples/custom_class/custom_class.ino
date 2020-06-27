@@ -33,7 +33,8 @@ void setup()
     Serial.begin(115200);
     delay(2000);
 
-    timeline.add(v, Vec2(10, 8), 5000)
+    timeline.add(v)
+        .then(Vec2(10, 8), 5000)
         .then(Vec2(5, 10), 5000)
         .wait(3000)
         .then<Ease::Bounce>(Vec2(0, 0), 7000);
