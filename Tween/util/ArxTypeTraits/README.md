@@ -9,6 +9,7 @@ C++11 class templates of this library is currently enabled only if you use follo
 
 - AVR (Uno, Nano, Mega, etc.)
 - MEGAAVR (Uno WiFi, Nano Ecery, etc.)
+- SAM (Due)
 - SAMD (Zero, MKR, M0, etc.)
 - SPRESENSE
 
