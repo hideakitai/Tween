@@ -2,18 +2,16 @@
     "name": "PollingTimer",
     "keywords": "timing, framerate, timer, fps",
     "description": "Arduino library to manage timing and event in a flexible way with polling",
-    "repository":
-    {
+    "repository": {
         "type": "git",
         "url": "https://github.com/hideakitai/PollingTimer.git"
     },
-    "authors":
-    {
+    "authors": {
         "name": "Hideaki Tai",
         "url": "https://github.com/hideakitai",
         "maintainer": true
     },
-    "version": "0.2.1",
+    "version": "0.2.2",
     "license": "MIT",
     "frameworks": "*",
     "platforms": "*"
