@@ -96,7 +96,7 @@ Please see `custom_class` example for details.
 
 - [Easing v0.1.0](https://github.com/hideakitai/Easing)
 - [PollingTimer v0.2.1](https://github.com/hideakitai/PollingTimer)
-- [ArxTypeTraits v0.1.12](https://github.com/hideakitai/ArxTypeTraits)
+- [ArxTypeTraits v0.2.0](https://github.com/hideakitai/ArxTypeTraits)
 - [ArxContainer v0.3.8](https://github.com/hideakitai/ArxContainer)
 - [ArxSmartPtr v0.1.2](https://github.com/hideakitai/ArxSmartPtr)
 - [TeensyDirtySTLErrorSolution v0.1.0](https://github.com/hideakitai/TeensyDirtySTLErrorSolution)
