@@ -32,7 +32,7 @@ namespace tween {
 #else
     template <typename T, typename U> using Map = arx::map<T, U>;
     template <typename T> using Vec = arx::vector<T>;
-    template <typename T> using Ref = arx::shared_ptr<T>;
+    template <typename T> using Ref = std::shared_ptr<T>;
     using namespace arx;
 #endif
 

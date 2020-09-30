@@ -43,14 +43,14 @@ namespace sequence {
         auto then(const U& to, const uint32_t in = 0)
         -> typename std::enable_if<std::is_convertible<U, T>::value, Sequence<T>&>::type
         {
-            add_transition(trans_t{duration(), duration() + in, make_shared<Transition<T, EasingType>>(target, prev_target, to, in)});
+            add_transition(trans_t{duration(), duration() + in, std::make_shared<Transition<T, EasingType>>(target, prev_target, to, in)});
             prev_target = (T)to;
             return *this;
         }
 
         Sequence<T>& wait(const uint32_t in)
         {
-            add_transition(trans_t{duration(), duration() + in, make_shared<Transition<T, Ease::Linear>>(target, prev_target, prev_target, in)});
+            add_transition(trans_t{duration(), duration() + in, std::make_shared<Transition<T, Ease::Linear>>(target, prev_target, prev_target, in)});
             return *this;
         }
 

@@ -23,7 +23,7 @@ public:
             return this->Timeline::operator[](target);
         else
         {
-            auto p = make_shared<Sequence<T>>(target);
+            auto p = std::make_shared<Sequence<T>>(target);
             seqs.insert(make_pair((void*)&target, (SequenceRef)p));
             return *p;
         }
