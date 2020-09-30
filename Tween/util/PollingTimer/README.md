@@ -210,6 +210,8 @@ OneShotTimer(const double sec, const std::function<void(void)>& f);
 ## Used Inside of
 
 - [Tween](https://github.com/hideakitai/Tween)
+- [SceneManager](https://github.com/hideakitai/SceneManager)
+- [TaskManager](https://github.com/hideakitai/TaskManager)
 
 
 ## License
