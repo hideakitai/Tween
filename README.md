@@ -24,7 +24,7 @@ void setup()
 
 void loop()
 {
-    timline.update(); // must be called to tween target
+    timeline.update(); // must be called to tween target
 
     Serial.println(target); // target value tweens automatically
 }
