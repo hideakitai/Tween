@@ -89,7 +89,7 @@ namespace sequence {
         {
             if (ms < 0) return 0;
             for (size_t i = 0; i < transitions.size(); ++i)
-                if (transitions[i].end_ms > ms)
+                if ((int64_t)transitions[i].end_ms > (int64_t)ms)
                     return i;
             return transitions.size();
         }
