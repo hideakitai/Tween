@@ -42,7 +42,7 @@ public:
                 setting.duration = it->second->duration();
 
             const bool done = !it->second->update(msec());
-            if (done)
+            if (done && (setting.mode == Mode::ONCE))
                 it = seqs.erase(it);
             else
                 ++it;
