@@ -2,11 +2,15 @@
 #ifndef HT_TWEEN_TYPES_H
 #define HT_TWEEN_TYPES_H
 
+#ifdef ARDUINO
 #include <Arduino.h>
 #include "Tween/util/TeensyDirtySTLErrorSolution/TeensyDirtySTLErrorSolution.h"
-#include "Tween/util/ArxTypeTraits/ArxTypeTraits.h"
-#include "Tween/util/ArxSmartPtr/ArxSmartPtr.h"
-#include "Tween/util/ArxContainer/ArxContainer.h"
+#elif defined(OF_VERSION_MAJOR)
+#include "ofMain.h"
+#endif
+#include "util/ArxTypeTraits/ArxTypeTraits.h"
+#include "util/ArxSmartPtr/ArxSmartPtr.h"
+#include "util/ArxContainer/ArxContainer.h"
 
 namespace ht {
 namespace tween {
