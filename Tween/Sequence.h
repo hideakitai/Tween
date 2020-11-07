@@ -69,7 +69,7 @@ namespace sequence {
             return true;
         }
 
-        virtual uint32_t duration() const { return duration_ms; }
+        virtual uint32_t duration() const override { return duration_ms; }
 
         size_t size() const { return transitions.size(); }
         bool empty() const { return transitions.size() == 0; }

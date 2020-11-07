@@ -58,7 +58,7 @@ namespace transition
             return false;
         }
 
-        virtual int32_t duration() const { return duration_ms; }
+        virtual int32_t duration() const override { return duration_ms; }
 
     private:
 
