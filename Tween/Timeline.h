@@ -51,9 +51,9 @@ public:
         if (ms > setting.duration) {
             switch (setting.mode)
             {
-                case Mode::ONCE: clear();   return false;
-                case Mode::LOOP: restart(); return true;
-                default:                    return false;
+                case Mode::ONCE:   clear();   return false;
+                case Mode::REPEAT: restart(); return true;
+                default:                      return false;
             }
         }
         else

@@ -43,9 +43,9 @@ timeline.add(f)
 ### Set Timeline Mode
 
 ``` C++
-timeline.mode(Tween::Mode::ONCE); // default: erase sequence if finished
-timeline.mode(Tween::Mode::LOOP); // loop sequence if finished
-timeline.mode(Tween::Mode::SAVE); // store sequence even if it finished
+timeline.mode(Tween::Mode::ONCE);   // default: erase sequence if finished
+timeline.mode(Tween::Mode::REPEAT); // repeat sequence if finished
+timeline.mode(Tween::Mode::SAVE);   // store sequence even if it finished
 ```
 
 ## Easing Types

@@ -17,9 +17,9 @@ namespace tween {
 
     enum class Mode : uint8_t
     {
-        ONCE, // do once and clear after finished
-        LOOP, // loop current timeline after finished
-        SAVE  // store current timeline with no loop
+        ONCE,   // do once and clear after finished
+        REPEAT, // repeat current timeline after finished
+        SAVE    // store current timeline with no loop
     };
 
     struct Setting
