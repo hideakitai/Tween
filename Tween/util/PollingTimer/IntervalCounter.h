@@ -46,6 +46,11 @@ public:
         return (double)cnt;
     }
 
+    inline double getInterval() const
+    {
+        return interval;
+    }
+
     inline void setInterval(const double interval_sec)
     {
         interval = interval_sec * 1000000.;

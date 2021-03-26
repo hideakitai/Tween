@@ -177,6 +177,7 @@ explicit IntervalCounter (const double sec);
 void startForCount(const double duration_count = 0.);
 bool update();
 double count();
+double getInterval() const;
 void setInterval(const double interval_sec);
 void setOffsetCount(const double offset);
 void addEvent(const std::function<void(void)>& f);
