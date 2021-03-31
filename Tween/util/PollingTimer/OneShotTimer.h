@@ -3,28 +3,23 @@
 #define HT_ONESHOTTIMER_H
 
 #include "IntervalCounter.h"
+#include "util/ArxTypeTraits/ArxTypeTraits.h"
 
-class OneShotTimer : public IntervalCounter
-{
+class OneShotTimer : public IntervalCounter {
 public:
-
     virtual ~OneShotTimer() {}
 
     explicit OneShotTimer(const double sec)
-    : IntervalCounter(sec)
-    {}
+    : IntervalCounter(sec) {}
 
     OneShotTimer(const double sec, const std::function<void(void)>& f)
-    : IntervalCounter(sec)
-    {
+    : IntervalCounter(sec) {
         IntervalCounter::addEvent(f);
     }
 
-    void start()
-    {
-        IntervalCounter::startForCount(1);
+    void start() {
+        IntervalCounter::startOnce();
     }
-
 };
 
-#endif // HT_ONESHOTTIMER_H
+#endif  // HT_ONESHOTTIMER_H

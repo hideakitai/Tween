@@ -4,37 +4,48 @@
 
 #include "IntervalCounter.h"
 
-class FrameRateCounter : public IntervalCounter
-{
-    double fps {40.};
-    bool is_one_start {false};
-
+class FrameRateCounter : public IntervalCounter {
 public:
-
-    explicit FrameRateCounter(const double fps)
-    : IntervalCounter(1.0 / fps)
-    , fps(fps)
-    , is_one_start(false)
-    {}
+    explicit FrameRateCounter(const double fps = 1000000.)
+    : IntervalCounter(fps_to_interval(fps)) {}
 
     virtual ~FrameRateCounter() {}
 
-    inline double frame()
-    {
-        return is_one_start ? (count() + 1.) : count();
+    inline void startFps(const double fps) {
+        startFpsFromFor(fps, 0., 0.);
+    }
+    inline void startFpsFrom(const double fps, const double from_frame) {
+        startFpsFromFor(fps, from_frame, 0.);
+    }
+    inline void startFpsFor(const double for_frame) {
+        startFpsFromFor(getFrameRate(), 0., for_frame);
+    }
+    inline void startFpsFor(const double fps, const double for_frame) {
+        startFpsFromFor(fps, 0., for_frame);
+    }
+    inline void startFpsFromFor(const double fps, const double from_frame, const double for_frame) {
+        IntervalCounter::startIntervalFromFor(fps_to_interval(fps), from_frame, for_frame);
     }
 
-    inline void setFrameRate(const double rate)
-    {
-        fps = rate;
-        setInterval(1. / fps);
+    inline double frame() {
+        return count();
     }
 
-    inline void setFirstFrameToOne(const bool b) { is_one_start = b; }
+    inline void setFrameRate(const double fps) {
+        setInterval(fps_to_interval(fps));
+    }
 
-    double getFrameRate() const { return fps; }
-    bool isFristFrameOne() const { return is_one_start; }
+    double getFrameRate() const { return 1000000. / IntervalCounter::getInterval(); }
 
+private:
+    double fps_to_interval(const double fps) const {
+        if (fps <= 0.001) {
+            return 1. / 0.001;  // 1000[s] = 1,000,000,000[us]
+        } else if (fps >= 1000000.) {
+            return 1. / 1000000.;  // 0.000001[s] = 1[us]
+        } else
+            return 1. / fps;
+    }
 };
 
-#endif // HT_FRAMERATECOUNTER_H
+#endif  // HT_FRAMERATECOUNTER_H

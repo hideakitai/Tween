@@ -157,42 +157,55 @@ double getDuration() const;
 double getRemainingTime();
 double getRemainingLife();
 
-void setOffsetUsec(const int64_t us);
+void setOffsetUsec64(const int64_t us);
+void setOffsetUsec(const double us);
 void setOffsetMsec(const double ms);
 void setOffsetSec(const double sec);
 
-void addOffsetUsec(const int64_t us);
+void addOffsetUsec64(const int64_t us);
+void addOffsetUsec(const double us);
 void addOffsetMsec(const double ms);
 void addOffsetSec(const double sec);
 
-void setTimeUsec(const int64_t u);
-void setTimeMsec(const double m) { setTimeUsec(int64_t(m * 1000.)); }
-void setTimeSec(const double s) { setTimeUsec(int64_t(s * 1000000.)); }
+void setTimeUsec64(const int64_t u);
+void setTimeUsec(const double u);
+void setTimeMsec(const double m);
+void setTimeSec(const double s);
 ```
 
 ### `IntervalCounter`  (also available on `FrameRateCounter` & `OneShotTimer`)
 
 ``` C++
-explicit IntervalCounter (const double sec);
-void startForCount(const double duration_count = 0.);
-bool update();
+explicit IntervalCounter (const double sec = 0.);
+void startInterval(const double interval_sec);
+void startIntervalFrom(const double interval_sec, const double from_count);
+void startIntervalFor(const double for_count);
+void startIntervalFor(const double interval_sec, const double for_count);
+void startIntervalFromFor(const double interval_sec, const double from_count, const double for_count);
+void startOnceAfter(const double after_sec);
+void stop();
+void restart();
 double count();
 double getInterval() const;
 void setInterval(const double interval_sec);
 void setOffsetCount(const double offset);
 void addEvent(const std::function<void(void)>& f);
 bool hasEvent() const;
+bool update();
 ```
 
 ### `FrameRateCounter` only
 
 ``` C++
-explicit FrameRateCounter(const double fps);
+explicit FrameRateCounter(const double fps = 1000000.);
+void startFps(const double fps);
+void startFpsFrom(const double fps, const double from_frame);
+void startFpsFor(const double for_frame);
+void startFpsFor(const double fps, const double for_frame);
+void startFpsFromFor(const double fps, const double from_frame, const double for_frame);
 double frame();
-void setFrameRate(const double rate);
-void setFirstFrameToOne(const bool b);
+void setFrameRate(const double fps);
 double getFrameRate() const;
-bool isFristFrameOne() const;
 ```
 
 ### `OneShotTimer` only
@@ -200,6 +213,7 @@ bool isFristFrameOne() const;
 ``` C++
 explicit OneShotTimer(const double sec);
 OneShotTimer(const double sec, const std::function<void(void)>& f);
+void start();
 ```
 
 ## Embedded Libraries
@@ -211,7 +225,6 @@ OneShotTimer(const double sec, const std::function<void(void)>& f);
 ## Used Inside of
 
 - [Tween](https://github.com/hideakitai/Tween)
-- [SceneManager](https://github.com/hideakitai/SceneManager)
 - [TaskManager](https://github.com/hideakitai/TaskManager)
 
 
