@@ -4,8 +4,7 @@
 Tween::Timeline timeline;
 CRGB c;
 
-void setup()
-{
+void setup() {
     Serial.begin(115200);
     delay(2000);
 
@@ -19,44 +18,45 @@ void setup()
         .wait(3000)
         .then<Ease::Bounce>(CRGB(0, 0, 0), 5000);
 
-    Serial.println("r, g, b"); // serial plotter label
+    Serial.println("r, g, b");  // serial plotter label
 
     FastLED.addLeds<NEOPIXEL, 27>(&c, 1);
 
     delay(2000);
 
     // timeline mode settings
-    timeline.mode(Tween::Mode::ONCE); // default
+    timeline.mode(Tween::Mode::ONCE);  // default
     // timeline.mode(Tween::Mode::REPEAT);
     // timeline.mode(Tween::Mode::SAVE);
 
-    timeline.start(); // must be started to tween items in timeline
+    timeline.start();  // must be started to tween items in timeline
 }
 
-void loop()
-{
-    timeline.update(); // must be called to update tween in timeline
+void loop() {
+    timeline.update();  // must be called to update tween in timeline
 
-    if ((timeline.mode() != Tween::Mode::REPEAT) && (timeline.sec() > 20))
-    {
+    if ((timeline.mode() != Tween::Mode::REPEAT) && (timeline.sec() > 20)) {
         c = CRGB::Black;
         FastLED.show();
 
         String m;
-        if      (timeline.mode() == Tween::Mode::ONCE) m = "Mode::ONCE";
-        else if (timeline.mode() == Tween::Mode::SAVE) m = "Mode::SAVE";
+        if (timeline.mode() == Tween::Mode::ONCE)
+            m = "Mode::ONCE";
+        else if (timeline.mode() == Tween::Mode::SAVE)
+            m = "Mode::SAVE";
+
         Serial.println("tween mode = " + m);
         Serial.println("size of transitions = " + String(timeline.size()));
         delay(1000);
-    }
-    else
-    {
+    } else {
         static uint32_t prev_ms = millis();
-        if (millis() > prev_ms + 20)
-        {
-            Serial.print(c.r); Serial.print(", ");
-            Serial.print(c.g); Serial.print(", ");
-            Serial.print(c.b); Serial.println();
+        if (millis() > prev_ms + 20) {
+            Serial.print(c.r);
+            Serial.print(", ");
+            Serial.print(c.g);
+            Serial.print(", ");
+            Serial.print(c.b);
+            Serial.println();
 
             FastLED.show();
 
