@@ -5,4 +5,4 @@
 
 namespace Tween = ht::tween;
 
-#endif // ARDUINOTWEEN_H
+#endif  // ARDUINOTWEEN_H
