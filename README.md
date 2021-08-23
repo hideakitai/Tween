@@ -2,7 +2,6 @@
 
 Tween library for Arduino
 
-
 ## Usage
 
 ```C++
@@ -42,7 +41,7 @@ timeline.add(f)
 
 ### Set Timeline Mode
 
-``` C++
+```C++
 timeline.mode(Tween::Mode::ONCE);   // default: erase sequence if finished
 timeline.mode(Tween::Mode::REPEAT); // repeat sequence if finished
 timeline.mode(Tween::Mode::SAVE);   // store sequence even if it finished
@@ -79,7 +78,6 @@ using Quint = QuintInOut;
 using Sine = SineInOut;
 ```
 
-
 ## Custom Class Adaptation
 
 You can use custom classes if you have implemented following operators.
@@ -91,16 +89,14 @@ You can use custom classes if you have implemented following operators.
 If you have these operator overloads, you can use that variable completely as same as other built-in variables.
 Please see `custom_class` example for details.
 
-
 ## Embedded Libraries
 
 - [Easing v0.1.0](https://github.com/hideakitai/Easing)
-- [PollingTimer v0.2.5](https://github.com/hideakitai/PollingTimer)
+- [PollingTimer v0.3.0](https://github.com/hideakitai/PollingTimer)
 - [ArxTypeTraits v0.2.1](https://github.com/hideakitai/ArxTypeTraits)
 - [ArxContainer v0.3.14](https://github.com/hideakitai/ArxContainer)
 - [ArxSmartPtr v0.2.1](https://github.com/hideakitai/ArxSmartPtr)
 - [TeensyDirtySTLErrorSolution v0.1.0](https://github.com/hideakitai/TeensyDirtySTLErrorSolution)
-
 
 ## License
 

@@ -14,7 +14,7 @@ public:
 
     OneShotTimer(const double sec, const std::function<void(void)>& f)
     : IntervalCounter(sec) {
-        IntervalCounter::addEvent(f);
+        IntervalCounter::onUpdate(f);
     }
 
     void start() {

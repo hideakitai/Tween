@@ -71,18 +71,22 @@ public:
         setOffsetUsec(interval * offset);
     }
 
-    inline void addEvent(const std::function<void(void)>& f) {
+    inline void onUpdate(const std::function<void(void)>& f) {
         func = f;
     }
 
-    inline bool hasEvent() const {
+    inline bool hasEventOnUpdate() const {
         return (bool)func;
     }
 
+    inline void removeEventOnUpdate() {
+        func = nullptr;
+    }
+
     inline bool update() {
-        if (isStopping()) return false;
+        const double us = this->usec();
         double prev_cnt = cnt;
-        cnt = (double)usec() / interval;
+        cnt = us / interval;
         bool b = (floor(cnt) > 0.) && (floor(cnt) > floor(prev_cnt));
         if (b && func) func();
         return b;

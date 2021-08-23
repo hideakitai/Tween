@@ -30,6 +30,10 @@ protected:
     int64_t offset {0};
     int64_t duration {0};
 
+    std::function<void(void)> cb_start;
+    std::function<void(void)> cb_pause;
+    std::function<void(void)> cb_stop;
+
 public:
     virtual ~PollingTimer() {}
 
@@ -64,7 +68,7 @@ public:
         startFromForUsec64(from_us, for_us);
     }
     inline void startFromForUsec64(const int64_t from_us, const int64_t for_us) {
-        prev_running = false;
+        prev_running = running;
         running = true;
         prev_us32 = MICROS();
         origin = prev_us64 = (int64_t)prev_us32;
@@ -85,6 +89,7 @@ public:
 
     inline void play() {
         if (isPausing()) {
+            prev_running = running;
             running = true;
             const uint32_t curr_us32 = MICROS();
             int64_t diff = 0;
@@ -95,6 +100,10 @@ public:
             origin += diff;
             prev_us64 += diff;
             prev_us32 = curr_us32;
+            // No need to change
+            // ovf
+            // offset
+            // duration
         } else if (isRunning())
             ;
         else
@@ -106,6 +115,13 @@ public:
             microsec();
             prev_running = running;
             running = false;
+            // No need to change
+            // origin
+            // prev_us32
+            // prev_us64
+            // ovf
+            // offset
+            // duration
         }
     }
 
@@ -118,8 +134,9 @@ public:
     inline bool isPausing() const { return (!running && (origin != 0)); }
     inline bool isStopping() const { return (!running && (origin == 0)); }
 
-    inline bool hasStarted() const { return running && !prev_running; }
-    inline bool hasFinished() const { return !isPausing() && !running && prev_running; }
+    inline bool hasStarted() const { return isRunning() && !prev_running; }
+    inline bool hasPaused() const { return isPausing() && prev_running; }
+    inline bool hasStopped() const { return isStopping() && prev_running; }
 
     inline int64_t usec64() { return microsec(); }
     inline double usec() { return (double)microsec(); }
@@ -178,22 +195,40 @@ public:
     inline void setTimeMsec(const double m) { setTimeUsec64(int64_t(m * 1000.)); }
     inline void setTimeSec(const double s) { setTimeUsec64(int64_t(s * 1000000.)); }
 
+    void onStart(const std::function<void(void)>& cb) { cb_start = cb; }
+    void onPause(const std::function<void(void)>& cb) { cb_pause = cb; }
+    void onStop(const std::function<void(void)>& cb) { cb_stop = cb; }
+
+    void removeEventOnStart() { cb_start = nullptr; }
+    void removeEventOnPause() { cb_pause = nullptr; }
+    void removeEventOnStop() { cb_stop = nullptr; }
+
+    bool hasEventOnStart() const { return (bool)cb_start; }
+    bool hasEventOnPause() const { return (bool)cb_pause; }
+    bool hasEventOnStop() const { return (bool)cb_stop; }
+
 protected:
     inline int64_t microsec() {
-        if (isStopping()) return 0;
-        if (isPausing()) {
-            if (hasFinished()) prev_running = false;
-            return prev_us64 - origin + offset;
-        }
+        if (isRunning()) {
+            if (cb_start && hasStarted()) cb_start();
+            prev_running = true;
 
-        int64_t t = elapsed() + offset;
-        if ((t >= duration) && (duration != 0)) {
-            running = false;
+            int64_t t = elapsed() + offset;
+            if ((t >= duration) && (duration != 0)) {
+                running = false;
+                return prev_us64 - origin + offset;
+            } else {
+                return t;
+            }
+        } else if (isPausing()) {
+            if (cb_pause && hasPaused()) cb_pause();
+            prev_running = false;
             return prev_us64 - origin + offset;
+        } else {
+            if (cb_stop && hasStopped()) cb_stop();
+            prev_running = false;
+            return 0;
         }
-        prev_running = isRunning();
-
-        return t;
     }
 
     inline int64_t elapsed() {

@@ -2,7 +2,6 @@
 
 Arduino library to manage timing and event in a flexible way with polling
 
-
 ## Feature
 
 - Four timers based on the situation
@@ -13,25 +12,21 @@ Arduino library to manage timing and event in a flexible way with polling
 - Timer events with callback / lambda
 - 64bit support
 
-
 ## Usage
 
 ### `PollingTimer`
 
-``` C++
+```C++
 #include <PollingTimer.h>
 PollingTimer timer;
 
-void setup()
-{
+void setup() {
     Serial.begin(115200);
     timer.start();
 }
 
-void loop()
-{
-    if (timer.isRunning())
-    {
+void loop() {
+    if (timer.isRunning()) {
         Serial.println(timer.msec());
     }
 }
@@ -39,14 +34,12 @@ void loop()
 
 ### `IntervalCounter`
 
-``` C++
+```C++
 #include <IntervalCounter.h>
 IntervalCounter interval(1.0); // interval is 1.0[sec]
 
-void setup()
-{
-    interval.addEvent([&]()
-    {
+void setup() {
+    interval.onUpdate([&]() {
         Serial.print("interval count = ");
         Serial.print(interval.count());
         Serial.print(", time = ");
@@ -56,22 +49,19 @@ void setup()
     interval.start();
 }
 
-void loop()
-{
+void loop() {
     interval.update(); // event occurs if interval is changed
 }
 ```
 
 ### `FrameRateCounter`
 
-``` C++
+```C++
 #include <FrameRateCounter.h>
 FrameRateCounter fps(30); // set framrate to 30[Hz]
 
-void setup()
-{
-    fps.addEvent([&]()
-    {
+void setup() {
+    fps.onUpdate([&]() {
         Serial.print("frame no. = ");
         Serial.print(fps.frame());
         Serial.print(", time = ");
@@ -81,22 +71,19 @@ void setup()
     fps.start();
 }
 
-void loop()
-{
+void loop() {
     fps.update(); // event occurs if fram has changed
 }
 ```
 
 ### `OneShotTimer`
 
-``` C++
+```C++
 #include <OneShotTimer.h>
 OneShotTimer onshot(5); // event will be
 
-void setup()
-{
-    oneshot.addEvent([&]()
-    {
+void setup() {
+    oneshot.onUpdate([&]() {
         Serial.print("oneshot event, time = ");
         Serial.println(millis());
     });
@@ -104,23 +91,20 @@ void setup()
     oneshot.start();
 }
 
-void loop()
-{
+void loop() {
     oneshot.update(); // event occurs only once if time has elapsed
 }
 ```
-
 
 ## PollingTimer States Transition
 
 ![](resources/pollingtimer_states.jpg)
 
-
 ## APIs
 
 ### `PollingTimer` (also available on all timer)
 
-``` C++
+```C++
 void start();
 void startFrom(const double from_sec);
 void startFromMsec(const double from_ms);
@@ -143,7 +127,8 @@ bool isPausing() const;
 bool isStopping() const;
 
 bool hasStarted() const;
-bool hasFinished() const;
+bool hasPaused() const;
+bool hasStopped() const;
 
 int64_t usec64();
 double usec();
@@ -171,11 +156,23 @@ void setTimeUsec64(const int64_t u);
 void setTimeUsec(const double u);
 void setTimeMsec(const double m);
 void setTimeSec(const double s);
+
+void onStart(const std::function<void(void)>& cb);
+void onPause(const std::function<void(void)>& cb);
+void onStop(const std::function<void(void)>& cb);
+
+void removeEventOnStart();
+void removeEventOnPause();
+void removeEventOnStop();
+
+bool hasEventOnStart() const;
+bool hasEventOnPause() const;
+bool hasEventOnStop() const;
 ```
 
-### `IntervalCounter`  (also available on `FrameRateCounter` & `OneShotTimer`)
+### `IntervalCounter` (also available on `FrameRateCounter` & `OneShotTimer`)
 
-``` C++
+```C++
 explicit IntervalCounter (const double sec = 0.);
 void startInterval(const double interval_sec);
 void startIntervalFrom(const double interval_sec, const double from_count);
@@ -189,14 +186,15 @@ double count();
 double getInterval() const;
 void setInterval(const double interval_sec);
 void setOffsetCount(const double offset);
-void addEvent(const std::function<void(void)>& f);
-bool hasEvent() const;
+void onUpdate(const std::function<void(void)>& f);
+bool hasEventOnUpdate() const;
+void removeEventOnUpdate();
 bool update();
 ```
 
 ### `FrameRateCounter` only
 
-``` C++
+```C++
 explicit FrameRateCounter(const double fps = 1000000.);
 void startFps(const double fps);
 void startFpsFrom(const double fps, const double from_frame);
@@ -210,7 +208,7 @@ double getFrameRate() const;
 
 ### `OneShotTimer` only
 
-``` C++
+```C++
 explicit OneShotTimer(const double sec);
 OneShotTimer(const double sec, const std::function<void(void)>& f);
 void start();
@@ -221,12 +219,10 @@ void start();
 - [ArxTypeTraits v0.2.1](https://github.com/hideakitai/ArxTypeTraits)
 - [TeensyDirtySTLErrorSolution v0.1.0](https://github.com/hideakitai/TeensyDirtySTLErrorSolution)
 
-
 ## Used Inside of
 
 - [Tween](https://github.com/hideakitai/Tween)
 - [TaskManager](https://github.com/hideakitai/TaskManager)
-
 
 ## License
 
