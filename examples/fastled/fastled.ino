@@ -9,6 +9,7 @@ void setup() {
     delay(2000);
 
     timeline.add(c)
+        .init(CRGB::Black)
         .wait(1000)
         .then(CRGB::White)
         .wait(1000)

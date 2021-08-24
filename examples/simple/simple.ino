@@ -11,6 +11,7 @@ void setup() {
 
     // tween target value a to 10 in 5000[ms]
     timeline.add(a)
+        .init(0)
         .then(10, 5000)
         .then(5, 5000)   // and then Ease::Linear to 5 in 5000[ms]
         .wait(3000)      // and stop 1000[ms]
@@ -18,6 +19,7 @@ void setup() {
 
     // Ease::Sine target value b to 10 in 5000[ms]
     timeline.add(b)
+        .init(0)
         .then<Ease::Sine>(10, 5000)
         .then<Ease::Elastic>(5, 5000)  // and then Ease::Elastic to 5 in 5000[ms]
         .wait(3000)                    // and stop 1000[ms]
