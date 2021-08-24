@@ -11,35 +11,84 @@ namespace tween {
     namespace sequence {
 
         class Base {
-            bool b_repeat {false};
-
-        public:
-            virtual ~Base() {}
-            virtual bool update(const double curr_ms) = 0;
-            virtual double duration() const = 0;
-
-            void repeat(const bool b) { b_repeat = true; }
-            bool repeat() const { return b_repeat; }
-        };
-
-        template <typename T>
-        class Sequence : public Base {
+        protected:
             struct trans_t {
                 double begin_ms;
                 double end_ms;
                 TransitionRef ref;
             };
 
+            Vec<trans_t> transitions;
+            bool b_repeat {false};
+            double duration_ms {0.};
+            double offset_ms {0.};
+
+        public:
+            virtual ~Base() {}
+
+            virtual bool update(const double curr_ms) {
+                if (transitions.empty()) return false;
+
+                double ms = curr_ms - offset_ms;
+                if (repeat()) {
+                    ms = fmod(ms, duration_ms);
+                }
+
+                const size_t idx = from_time_to_index(ms);
+                if (idx >= transitions.size()) {
+                    transitions.back().ref->update(transitions.back().end_ms);
+                    return false;
+                }
+
+                transitions[idx].ref->update(ms - transitions[idx].begin_ms);
+                return true;
+            }
+
+            double offset() const { return offset_ms; }
+            double duration() const { return duration_ms; }
+            double duration_with_offset() const { return duration_ms + offset_ms; }
+
+            void repeat(const bool b) { b_repeat = true; }
+            bool repeat() const { return b_repeat; }
+
+            size_t size() const { return transitions.size(); }
+            bool empty() const { return transitions.size() == 0; }
+            void clear() { transitions.clear(); }
+
+        protected:
+            void add_transition(const trans_t& t) {
+                transitions.emplace_back(t);
+                duration_ms = 0;
+                for (const auto& t : transitions)
+                    duration_ms += t.ref->duration();
+            }
+
+            size_t from_time_to_index(const double ms) const {
+                if (ms < 0) return 0;
+                for (size_t i = 0; i < transitions.size(); ++i)
+                    if (transitions[i].end_ms > ms)
+                        return i;
+                return transitions.size();
+            }
+        };
+
+        template <typename T>
+        class Sequence : public Base {
             T& target;
             T prev_target;
-            Vec<trans_t> transitions;
-            double duration_ms {0};
 
         public:
             virtual ~Sequence() {}
 
             explicit Sequence(T& target)
             : target(target), prev_target(target) {}
+
+            template <typename U = T>
+            auto init(const U& to)
+                -> typename std::enable_if<std::is_convertible<U, T>::value, Sequence<T>&>::type {
+                prev_target = (T)to;
+                return *this;
+            }
 
             template <typename EasingType = Ease::Linear, typename U = T>
             auto then(const U& to, const double in = 0)
@@ -54,44 +103,9 @@ namespace tween {
                 return *this;
             }
 
-            virtual bool update(const double curr_ms) override {
-                if (transitions.empty()) return false;
-
-                double ms = curr_ms;
-                if (this->repeat()) {
-                    ms = fmod(curr_ms, duration_ms);
-                }
-
-                const size_t idx = from_time_to_index(ms);
-                if (idx >= transitions.size()) {
-                    transitions.back().ref->update(transitions.back().end_ms);
-                    return false;
-                }
-
-                transitions[idx].ref->update(ms - transitions[idx].begin_ms);
-                return true;
-            }
-
-            virtual double duration() const override { return duration_ms; }
-
-            size_t size() const { return transitions.size(); }
-            bool empty() const { return transitions.size() == 0; }
-            void clear() { transitions.clear(); }
-
-        private:
-            void add_transition(const trans_t& t) {
-                transitions.emplace_back(t);
-                duration_ms = 0;
-                for (const auto& t : transitions)
-                    duration_ms += t.ref->duration();
-            }
-
-            size_t from_time_to_index(const double ms) const {
-                if (ms < 0) return 0;
-                for (size_t i = 0; i < transitions.size(); ++i)
-                    if (transitions[i].end_ms > ms)
-                        return i;
-                return transitions.size();
+            Sequence<T>& offset(const double ms) {
+                offset_ms = ms;
+                return *this;
             }
         };
 

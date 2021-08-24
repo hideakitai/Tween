@@ -29,8 +29,8 @@ namespace tween {
             // update total duration of this timeline
             auto it = seqs.begin();
             while (it != seqs.end()) {
-                if (setting.duration < it->second->duration())
-                    setting.duration = it->second->duration();
+                if (setting.duration < it->second->duration_with_offset())
+                    setting.duration = it->second->duration_with_offset();
                 ++it;
             }
             this->FrameRateCounter::start();
@@ -77,7 +77,7 @@ namespace tween {
         }
 
         void clear() {
-            for (auto& s : seqs) s.second->update(s.second->duration());
+            for (auto& s : seqs) s.second->update(s.second->duration_with_offset());
             seqs.clear();
             PollingTimer::stop();
         }
