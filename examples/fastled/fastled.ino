@@ -26,7 +26,8 @@ void setup() {
 
     // timeline mode settings
     timeline.mode(Tween::Mode::ONCE);  // default
-    // timeline.mode(Tween::Mode::REPEAT);
+    // timeline.mode(Tween::Mode::REPEAT_TL);
+    // timeline.mode(Tween::Mode::REPEAT_SQ);
     // timeline.mode(Tween::Mode::SAVE);
 
     timeline.start();  // must be started to tween items in timeline
@@ -35,7 +36,7 @@ void setup() {
 void loop() {
     timeline.update();  // must be called to update tween in timeline
 
-    if ((timeline.mode() != Tween::Mode::REPEAT) && (timeline.sec() > 20)) {
+    if ((timeline.mode() != Tween::Mode::REPEAT_TL) && (timeline.mode() != Tween::Mode::REPEAT_SQ) && (timeline.sec() > 20)) {
         c = CRGB::Black;
         FastLED.show();
 
@@ -45,8 +46,6 @@ void loop() {
         else if (timeline.mode() == Tween::Mode::SAVE)
             m = "Mode::SAVE";
 
-        Serial.println("tween mode = " + m);
-        Serial.println("size of transitions = " + String(timeline.size()));
         delay(1000);
     } else {
         static uint32_t prev_ms = millis();
