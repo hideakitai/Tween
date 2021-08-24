@@ -10,10 +10,16 @@ namespace tween {
 
     namespace sequence {
 
-        struct Base {
+        class Base {
+            bool b_repeat {false};
+
+        public:
             virtual ~Base() {}
             virtual bool update(const double curr_ms) = 0;
             virtual double duration() const = 0;
+
+            void repeat(const bool b) { b_repeat = true; }
+            bool repeat() const { return b_repeat; }
         };
 
         template <typename T>
@@ -28,7 +34,6 @@ namespace tween {
             T prev_target;
             Vec<trans_t> transitions;
             double duration_ms {0};
-            bool b_repeat {false};
 
         public:
             virtual ~Sequence() {}
@@ -49,16 +54,11 @@ namespace tween {
                 return *this;
             }
 
-            Sequence<T>& repeat(const bool b) {
-                b_repeat = b;
-                return *this;
-            }
-
             virtual bool update(const double curr_ms) override {
                 if (transitions.empty()) return false;
 
                 double ms = curr_ms;
-                if (b_repeat) {
+                if (this->repeat()) {
                     ms = fmod(curr_ms, duration_ms);
                 }
 
