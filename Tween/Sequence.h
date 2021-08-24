@@ -26,7 +26,7 @@ namespace tween {
         public:
             virtual ~Base() {}
 
-            virtual bool update(const double curr_ms) {
+            bool update(const double curr_ms) {
                 if (transitions.empty()) return false;
 
                 double ms = curr_ms - offset_ms;
