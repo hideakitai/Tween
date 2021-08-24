@@ -4,48 +4,71 @@
 
 #include "Types.h"
 #include "Sequence.h"
-#include "util/PollingTimer/PollingTimer.h"
+#include "util/PollingTimer/FrameRateCounter.h"
 
 namespace ht {
 namespace tween {
 
-    class Timeline : public PollingTimer {
+    class Timeline : public FrameRateCounter {
         Map<void*, SequenceRef> seqs;
         Setting setting;
 
     public:
         template <typename T>
         Sequence<T>& add(T& target) {
-            if (seqs.find(&target) != seqs.end())
+            if (seqs.find(&target) != seqs.end()) {
                 return this->Timeline::operator[](target);
-            else {
+            } else {
                 auto p = std::make_shared<Sequence<T>>(target);
                 seqs.insert(make_pair((void*)&target, (SequenceRef)p));
                 return *p;
             }
         }
 
-        bool update() {
-            if (!isRunning()) return false;
-
-            double ms = msec();
-
+        void start() {
+            // update total duration of this timeline
             auto it = seqs.begin();
             while (it != seqs.end()) {
                 if (setting.duration < it->second->duration())
                     setting.duration = it->second->duration();
+                ++it;
+            }
+            this->FrameRateCounter::start();
+        }
 
-                const bool done = !it->second->update(msec());
-                if (done && (setting.mode == Mode::ONCE))
-                    it = seqs.erase(it);
-                else
+        bool update() {
+            if (!isRunning()) return false;
+
+            const double ms = msec();
+            auto it = seqs.begin();
+            while (it != seqs.end()) {
+                if (it->second->update(ms)) {
                     ++it;
+                } else {
+                    switch (setting.mode) {
+                        case Mode::ONCE: {
+                            it = seqs.erase(it);
+                            break;
+                        }
+                        case Mode::REPEAT_SQ: {
+                            it->second->repeat(true);
+                            ++it;
+                            break;
+                        }
+                        default: {
+                            ++it;
+                            break;
+                        }
+                    }
+                }
             }
 
+            // check current time here to seek completely to the end of sequence
             if (ms > setting.duration) {
                 switch (setting.mode) {
                     case Mode::ONCE: clear(); return false;
-                    case Mode::REPEAT: restart(); return true;
+                    case Mode::REPEAT_TL: restart(); return true;
+                    case Mode::REPEAT_SQ: return true;
                     default: return false;
                 }
             } else {
