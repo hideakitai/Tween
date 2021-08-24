@@ -14,8 +14,8 @@ namespace tween {
     namespace transition {
         struct Base {
             virtual ~Base() {}
-            virtual bool update(const int32_t t) = 0;
-            virtual int32_t duration() const = 0;
+            virtual bool update(const double t) = 0;
+            virtual double duration() const = 0;
         };
 
         template <typename T, typename EasingType>
@@ -24,11 +24,11 @@ namespace tween {
             const T from;
             const T to;
             const T diff;
-            const int32_t duration_ms;
+            const double duration_ms;
             EasingFunc<EasingType> ease;
 
         public:
-            Transition(T& target, const T& from, const T& to, const int32_t in)
+            Transition(T& target, const T& from, const T& to, const double in)
             : ref(target)
             , from(from)
             , to(to)
@@ -38,7 +38,7 @@ namespace tween {
 
             virtual ~Transition() {}
 
-            virtual bool update(const int32_t t) override {
+            virtual bool update(const double t) override {
                 if (t < 0)
                     ref = from;
                 else if (t >= duration_ms)
@@ -50,26 +50,26 @@ namespace tween {
                 return false;
             }
 
-            virtual int32_t duration() const override { return duration_ms; }
+            virtual double duration() const override { return duration_ms; }
 
         private:
             template <typename U = T>
-            auto lerp(const float t)
+            auto lerp(const double t)
                 -> typename std::enable_if<
                     !std::is_same<U, CRGB>::value && !std::is_same<U, CHSV>::value,
                     U>::type {
-                return diff * ease.get((float)t / (float)duration_ms) + from;
+                return diff * ease.get(t / duration_ms) + from;
             }
 
             template <typename U = T>
-            auto lerp(const float t)
+            auto lerp(const double t)
                 -> typename std::enable_if<
                     std::is_same<U, CRGB>::value || std::is_same<U, CHSV>::value,
                     U>::type {
-                float rgb[3];
-                const float rate = ease.get((float)t / (float)duration_ms);
+                double rgb[3];
+                const double rate = ease.get(t / duration_ms);
                 for (size_t i = 0; i < 3; ++i)
-                    rgb[i] = ((float)to[i] - (float)from[i]) * rate + (float)from[i];
+                    rgb[i] = ((double)to[i] - (double)from[i]) * rate + (double)from[i];
                 return U(rgb[0], rgb[1], rgb[2]);
             }
         };

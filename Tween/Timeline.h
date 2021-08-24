@@ -28,7 +28,7 @@ namespace tween {
         bool update() {
             if (!isRunning()) return false;
 
-            float ms = msec();
+            double ms = msec();
 
             auto it = seqs.begin();
             while (it != seqs.end()) {

@@ -12,22 +12,22 @@ namespace tween {
 
         struct Base {
             virtual ~Base() {}
-            virtual bool update(const int32_t curr_ms) = 0;
-            virtual uint32_t duration() const = 0;
+            virtual bool update(const double curr_ms) = 0;
+            virtual double duration() const = 0;
         };
 
         template <typename T>
         class Sequence : public Base {
             struct trans_t {
-                uint32_t begin_ms;
-                uint32_t end_ms;
+                double begin_ms;
+                double end_ms;
                 TransitionRef ref;
             };
 
             T& target;
             T prev_target;
             Vec<trans_t> transitions;
-            uint32_t duration_ms {0};
+            double duration_ms {0};
 
         public:
             virtual ~Sequence() {}
@@ -36,19 +36,19 @@ namespace tween {
             : target(target), prev_target(target) {}
 
             template <typename EasingType = Ease::Linear, typename U = T>
-            auto then(const U& to, const uint32_t in = 0)
+            auto then(const U& to, const double in = 0)
                 -> typename std::enable_if<std::is_convertible<U, T>::value, Sequence<T>&>::type {
                 add_transition(trans_t {duration(), duration() + in, std::make_shared<Transition<T, EasingType>>(target, prev_target, to, in)});
                 prev_target = (T)to;
                 return *this;
             }
 
-            Sequence<T>& wait(const uint32_t in) {
+            Sequence<T>& wait(const double in) {
                 add_transition(trans_t {duration(), duration() + in, std::make_shared<Transition<T, Ease::Linear>>(target, prev_target, prev_target, in)});
                 return *this;
             }
 
-            virtual bool update(const int32_t curr_ms) override {
+            virtual bool update(const double curr_ms) override {
                 if (transitions.empty()) return false;
 
                 const size_t idx = from_time_to_index(curr_ms);
@@ -61,7 +61,7 @@ namespace tween {
                 return true;
             }
 
-            virtual uint32_t duration() const override { return duration_ms; }
+            virtual double duration() const override { return duration_ms; }
 
             size_t size() const { return transitions.size(); }
             bool empty() const { return transitions.size() == 0; }
@@ -75,10 +75,10 @@ namespace tween {
                     duration_ms += t.ref->duration();
             }
 
-            size_t from_time_to_index(const int32_t ms) const {
+            size_t from_time_to_index(const double ms) const {
                 if (ms < 0) return 0;
                 for (size_t i = 0; i < transitions.size(); ++i)
-                    if ((int64_t)transitions[i].end_ms > (int64_t)ms)
+                    if (transitions[i].end_ms > ms)
                         return i;
                 return transitions.size();
             }

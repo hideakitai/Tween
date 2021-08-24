@@ -23,7 +23,7 @@ namespace tween {
 
     struct Setting {
         Mode mode {Mode::ONCE};
-        uint32_t duration {0};
+        double duration {0};
     };
 
 #if ARX_HAVE_LIBSTDCPLUSPLUS >= 201103L  // Have libstdc++11
