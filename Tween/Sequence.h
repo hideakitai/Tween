@@ -28,6 +28,7 @@ namespace tween {
             T prev_target;
             Vec<trans_t> transitions;
             double duration_ms {0};
+            bool b_repeat {false};
 
         public:
             virtual ~Sequence() {}
@@ -48,16 +49,26 @@ namespace tween {
                 return *this;
             }
 
+            Sequence<T>& repeat(const bool b) {
+                b_repeat = b;
+                return *this;
+            }
+
             virtual bool update(const double curr_ms) override {
                 if (transitions.empty()) return false;
 
-                const size_t idx = from_time_to_index(curr_ms);
+                double ms = curr_ms;
+                if (b_repeat) {
+                    ms = fmod(curr_ms, duration_ms);
+                }
+
+                const size_t idx = from_time_to_index(ms);
                 if (idx >= transitions.size()) {
                     transitions.back().ref->update(transitions.back().end_ms);
                     return false;
                 }
 
-                transitions[idx].ref->update(curr_ms - transitions[idx].begin_ms);
+                transitions[idx].ref->update(ms - transitions[idx].begin_ms);
                 return true;
             }
 
