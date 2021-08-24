@@ -1,8 +1,30 @@
 # Tween
 
-Tween library for Arduino
+Tween library for Arduino with Robert Penner's easing functions
 
-## Usage
+![tween.gif](assets/simple.gif)
+
+## Overview
+
+This library is consists of three classes and each `Transition` has easing function:
+
+- `Transition` : a transition of target value (with Easing)
+- `Sequence` : a series of transitions (with offset)
+- `Timeline` : a collection of sequences
+
+![overview.png](assets/overview.png)
+
+```C++
+Tween::Timeline timeline;       // create timeline
+timeline.add(target)            // add sequence to timeline
+    .init(0)                    // init target value (optional)
+    .offset(1000)               // delay start without transaction (optional)
+    .then(10, 5000)             // add transaction (change linearly)
+    .wait(1000)                 // add transaction (stay on the same value)
+    .then<Ease::Sine>(0, 500);  // add transaction with Easing
+```
+
+## Simple Usage
 
 ```C++
 #include <Tween.h>
@@ -10,9 +32,10 @@ Tween library for Arduino
 Tween::Timeline timeline;
 float target = 0.f;
 
-void setup()
-{
+void setup() {
     timeline.add(target) // target tweens
+        .init(0)         // init target value (optional)
+        .offset(1000)    // delay start 1000[ms] (optional)
         .then(10, 5000)  // to 10 in 5000[ms]
         .then(5, 5000)   // then to 5 in 5000[ms]
         .wait(1000)      // then stops 1000[ms]
@@ -21,15 +44,15 @@ void setup()
     timeline.start();
 }
 
-void loop()
-{
+void loop() {
     timeline.update(); // must be called to tween target
-
     Serial.println(target); // target value tweens automatically
 }
 ```
 
-### Use Easing Function in Tween
+## Use Easing Function
+
+You can specify a easing type for each transition.
 
 ```C++
 timeline.add(f)
@@ -39,17 +62,9 @@ timeline.add(f)
     .then<Ease::Bounce>(0, 5000);
 ```
 
-### Set Timeline Mode
+### Easing Types
 
-```C++
-timeline.mode(Tween::Mode::ONCE);   // default: erase sequence if finished
-timeline.mode(Tween::Mode::REPEAT); // repeat sequence if finished
-timeline.mode(Tween::Mode::SAVE);   // store sequence even if it finished
-```
-
-## Easing Types
-
-If you haven't specify the easing type, default value is `Ease::Linear`.
+Please refer [here](https://easings.net/) if you are not familiar with the easing. If you haven't specify the easing type, default value is `Ease::Linear`.
 
 - BackIn, BackOut, BackInOut
 - BounceIn, BounceOut, BounceInOut
@@ -78,7 +93,7 @@ using Quint = QuintInOut;
 using Sine = SineInOut;
 ```
 
-## Custom Class Adaptation
+## Use Custom Class for the Target Value
 
 You can use custom classes if you have implemented following operators.
 
@@ -88,6 +103,128 @@ You can use custom classes if you have implemented following operators.
 
 If you have these operator overloads, you can use that variable completely as same as other built-in variables.
 Please see `custom_class` example for details.
+
+```C++
+// CAUTION: just a simplified operator overloads
+struct Vec2 {
+    float x;
+    float y;
+
+    Vec2() : x(0), y(0) {}
+    Vec2(const float x, const float y) : x(x), y(y) {}
+
+    Vec2 operator+(const Vec2& rhs) const {
+        return Vec2(x + rhs.x, y + rhs.y);
+    }
+    Vec2 operator-(const Vec2& rhs) const {
+        return Vec2(x - rhs.x, y - rhs.y);
+    }
+    Vec2 operator*(const double f) const {
+        return Vec2(x * f, y * f);
+    }
+};
+
+Tween::Timeline timeline;
+Vec2 v;
+
+void setup() {
+    timeline.add(v)
+        .then(Vec2(10, 8), 5000)
+        .then(Vec2(5, 10), 5000)
+        .wait(3000)
+        .then<Ease::Bounce>(Vec2(0, 0), 7000);
+
+    timeline.start();
+}
+
+void loop() {
+    timeline.update();
+}
+```
+
+## Control Timeline with Mode and Offset
+
+### Timeline Mode
+
+There are 4 play mode for the `Timeline`.
+
+```C++
+timeline.mode(Tween::Mode::ONCE);      // default: erase each sequence if finished
+timeline.mode(Tween::Mode::REPEAT_TL); // repeat whole timeline if finished
+timeline.mode(Tween::Mode::REPEAT_SQ); // repeat each sequence if finished
+timeline.mode(Tween::Mode::SAVE);      // store the sequence after finished without loop
+```
+
+### Sequence Offset
+
+Offset is added only once in the begging of the timeline. Offset behaves differently especially based on the `REPEAT_TL` and `REPEAT_SQ` mode.
+
+- `REPEAT_TL` : Offset is always added in every loop
+- `REPEAT_SQ` : Offset is added only once in the beggining (not included in loop)
+
+![overview.png](assets/overview.png)
+
+### Example of Mode and Offset
+
+```C++
+Timeline timeline;
+float value[5];
+
+for (size_t i = 0; i < 5; ++i) {
+    timeline.add(value[i])
+        .offset(i * 1000)
+        .then(3, 1000)
+        .wait(2000);
+}
+```
+
+### Behavior: `Tween::Mode::REPEAT_TL`
+
+![repeat_tl](assets/repeat_tl.png)
+
+### Behavior: `Tween::Mode::REPEAT_SQ`
+
+![repeat_sq](assets/repeat_sq.png)
+
+## APIs
+
+### `Timeline`
+
+```C++
+template <typename T>
+Sequence<T>& add(T& target);
+
+void start();
+bool update();
+
+void clear();
+
+void mode(const Mode m);
+Mode mode() const;
+
+size_t size() const;
+
+template <typename T>
+const Sequence<T>& operator[](const T& t);
+template <typename T>
+Sequence<T>& operator[](T& t);
+```
+
+### `Sequence<T>`
+
+```C++
+template <typename U = T>
+auto init(const U& to)
+-> typename std::enable_if<std::is_convertible<U, T>::value, Sequence<T>&>::type;
+
+template <typename EasingType = Ease::Linear, typename U = T>
+auto then(const U& to, const double in = 0)
+-> typename std::enable_if<std::is_convertible<U, T>::value, Sequence<T>&>::type;
+
+Sequence<T>& wait(const double in);
+
+Sequence<T>& offset(const double ms);
+```
 
 ## Embedded Libraries
 
