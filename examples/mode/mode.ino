@@ -10,12 +10,14 @@ void setup() {
     delay(2000);
 
     // see how timeline mode setting affects
-    timeline.mode(Tween::Mode::ONCE);  // default
+    timeline.mode(Tween::Mode::ONCE);  // default: stop timeline after finished
     // timeline.mode(Tween::Mode::REPEAT_TL);  // repeat whole timeline
     // timeline.mode(Tween::Mode::REPEAT_SQ);  // repeat each sequence
-    // timeline.mode(Tween::Mode::SAVE);       // store sequences without loop
 
-    timeline.add(a)
+    // optionally you can choose if auto erase sequence
+    // default is false
+    bool b_auto_erase = false;
+    timeline.add(a, b_auto_erase)
         .then(10, 2000)
         .then(5, 2000)
         .wait(2000)  // this is the difference between a and b

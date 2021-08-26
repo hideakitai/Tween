@@ -29,7 +29,6 @@ void setup() {
     timeline.mode(Tween::Mode::ONCE);  // default
     // timeline.mode(Tween::Mode::REPEAT_TL);
     // timeline.mode(Tween::Mode::REPEAT_SQ);
-    // timeline.mode(Tween::Mode::SAVE);
 
     timeline.start();  // must be started to tween items in timeline
 }
@@ -40,13 +39,6 @@ void loop() {
     if ((timeline.mode() != Tween::Mode::REPEAT_TL) && (timeline.mode() != Tween::Mode::REPEAT_SQ) && (timeline.sec() > 20)) {
         c = CRGB::Black;
         FastLED.show();
-
-        String m;
-        if (timeline.mode() == Tween::Mode::ONCE)
-            m = "Mode::ONCE";
-        else if (timeline.mode() == Tween::Mode::SAVE)
-            m = "Mode::SAVE";
-
         delay(1000);
     } else {
         static uint32_t prev_ms = millis();
