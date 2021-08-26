@@ -15,7 +15,7 @@ namespace tween {
 
     public:
         template <typename T>
-        Sequence<T>& add(T& target, bool b_auto_erase = false) {
+        Sequence<T>& add(T& target, const bool b_auto_erase = false) {
             if (seqs.find(&target) != seqs.end()) {
                 return this->Timeline::operator[](target);
             } else {
