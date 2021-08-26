@@ -15,11 +15,12 @@ namespace tween {
 
     public:
         template <typename T>
-        Sequence<T>& add(T& target) {
+        Sequence<T>& add(T& target, bool b_auto_erase = false) {
             if (seqs.find(&target) != seqs.end()) {
                 return this->Timeline::operator[](target);
             } else {
                 auto p = std::make_shared<Sequence<T>>(target);
+                p->auto_erase(b_auto_erase);
                 seqs.insert(make_pair((void*)&target, (SequenceRef)p));
                 return *p;
             }
@@ -46,17 +47,22 @@ namespace tween {
                     ++it;
                 } else {
                     switch (setting.mode) {
-                        case Mode::ONCE: {
-                            it = seqs.erase(it);
-                            break;
-                        }
                         case Mode::REPEAT_SQ: {
-                            it->second->repeat(true);
-                            ++it;
+                            if (it->second->auto_erase())
+                                it = seqs.erase(it);
+                            else {
+                                it->second->repeat(true);
+                                ++it;
+                            }
                             break;
                         }
                         default: {
-                            ++it;
+                            if (it->second->auto_erase())
+                                it = seqs.erase(it);
+                            else {
+                                it->second->repeat(false);
+                                ++it;
+                            }
                             break;
                         }
                     }
@@ -66,10 +72,9 @@ namespace tween {
             // check current time here to seek completely to the end of sequence
             if (ms > setting.duration) {
                 switch (setting.mode) {
-                    case Mode::ONCE: clear(); return false;
                     case Mode::REPEAT_TL: restart(); return true;
                     case Mode::REPEAT_SQ: return true;
-                    default: return false;
+                    default: stop(); return false;
                 }
             } else {
                 return true;
@@ -79,7 +84,7 @@ namespace tween {
         void clear() {
             for (auto& s : seqs) s.second->update(s.second->duration_with_offset());
             seqs.clear();
-            PollingTimer::stop();
+            FrameRateCounter::stop();
         }
 
         void mode(const Mode m) { setting.mode = m; }

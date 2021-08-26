@@ -16,10 +16,9 @@ namespace ht {
 namespace tween {
 
     enum class Mode : uint8_t {
-        ONCE,       // do once and clear after finished
+        ONCE,       // do once and stop after finished
         REPEAT_TL,  // repeat whole timeline after finished
         REPEAT_SQ,  // repeat each sequence after finished
-        SAVE        // store current timeline with no loop
     };
 
     struct Setting {

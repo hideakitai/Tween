@@ -20,6 +20,7 @@ namespace tween {
 
             Vec<trans_t> transitions;
             bool b_repeat {false};
+            bool b_auto_erase {false};
             double duration_ms {0.};
             double offset_ms {0.};
 
@@ -48,7 +49,10 @@ namespace tween {
             double duration() const { return duration_ms; }
             double duration_with_offset() const { return duration_ms + offset_ms; }
 
-            void repeat(const bool b) { b_repeat = true; }
+            void auto_erase(const bool b) { b_auto_erase = b; }
+            bool auto_erase() const { return b_auto_erase; }
+
+            void repeat(const bool b) { b_repeat = b; }
             bool repeat() const { return b_repeat; }
 
             size_t size() const { return transitions.size(); }
