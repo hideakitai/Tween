@@ -142,17 +142,26 @@ void loop() {
 }
 ```
 
-## Control Timeline with Mode and Offset
+## Control Timeline with Mode, Auto Erase, and Offset
 
 ### Timeline Mode
 
-There are 4 play mode for the `Timeline`.
+There are 3 play mode for the `Timeline`.
 
 ```C++
-timeline.mode(Tween::Mode::ONCE);      // default: erase each sequence if finished
+timeline.mode(Tween::Mode::ONCE);      // default: stop timeline if finished
 timeline.mode(Tween::Mode::REPEAT_TL); // repeat whole timeline if finished
 timeline.mode(Tween::Mode::REPEAT_SQ); // repeat each sequence if finished
-timeline.mode(Tween::Mode::SAVE);      // store the sequence after finished without loop
+```
+
+### Auto Erase the Sequence
+
+You can choose if you automatically erase the each sequence. This is not affected by timeline mode. If you choose to erase the sequence automatically, it will be erased after the first loop is finished. The default value is `false`.
+
+```C++
+timeline.add(v, true)  // erase this sequence automatically (default: false)
+    .then(10, 5000)
+    .then(0, 5000);
 ```
 
 ### Sequence Offset
@@ -192,7 +201,7 @@ for (size_t i = 0; i < 5; ++i) {
 
 ```C++
 template <typename T>
-Sequence<T>& add(T& target);
+Sequence<T>& add(T& target, const bool b_auto_erase = false);
 
 void start();
 bool update();
