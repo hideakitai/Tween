@@ -215,11 +215,10 @@ protected:
 
             int64_t t = elapsed() + offset;
             if ((t >= duration) && (duration != 0)) {
-                running = false;
-                return prev_us64 - origin + offset;
-            } else {
-                return t;
+                t = prev_us64 - origin + offset;
+                stop();
             }
+            return t;
         } else if (isPausing()) {
             if (cb_pause && hasPaused()) cb_pause();
             prev_running = false;
