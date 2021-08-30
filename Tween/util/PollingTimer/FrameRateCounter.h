@@ -7,44 +7,85 @@
 class FrameRateCounter : public IntervalCounter {
 public:
     explicit FrameRateCounter(const double fps = 1000000.)
-    : IntervalCounter(fps_to_interval(fps)) {}
+    : IntervalCounter(fps_to_interval_us(fps) * 0.000001) {}
 
     virtual ~FrameRateCounter() {}
 
-    inline void startFps(const double fps) {
-        startFpsFromFor(fps, 0., 0.);
+    void startFromFrame(const double from_frame) {
+        startFromCount(from_frame);
     }
-    inline void startFpsFrom(const double fps, const double from_frame) {
-        startFpsFromFor(fps, from_frame, 0.);
+    void startForFrame(const double for_frame, const bool loop = false) {
+        startForCount(for_frame, loop);
     }
-    inline void startFpsFor(const double for_frame) {
-        startFpsFromFor(getFrameRate(), 0., for_frame);
-    }
-    inline void startFpsFor(const double fps, const double for_frame) {
-        startFpsFromFor(fps, 0., for_frame);
-    }
-    inline void startFpsFromFor(const double fps, const double from_frame, const double for_frame) {
-        IntervalCounter::startIntervalFromFor(fps_to_interval(fps), from_frame, for_frame);
+    void startFromForFrame(const double from_frame, const double for_frame, const bool loop = false) {
+        startFromForCount(from_frame, for_frame, loop);
     }
 
-    inline double frame() {
+    void startFps(const double fps) {
+        startFpsFromForFrame(fps, 0., 0., false);
+    }
+
+    void startFpsFromSec(const double fps, const double from_sec) {
+        startFpsFromForSec(fps, from_sec, 0., false);
+    }
+    void startFpsFromMsec(const double fps, const double from_ms) {
+        startFpsFromForMsec(fps, from_ms, 0., false);
+    }
+    void startFpsFromUsec(const double fps, const double from_us) {
+        startFpsFromForUsec(fps, from_us, 0., false);
+    }
+    void startFpsFromFrame(const double fps, const double from_frame) {
+        startFpsFromForFrame(fps, from_frame, 0., false);
+    }
+
+    void startFpsForSec(const double fps, const double for_sec, const bool loop = false) {
+        startFpsFromForSec(fps, 0., for_sec, loop);
+    }
+    void startFpsForMsec(const double fps, const double for_ms, const bool loop = false) {
+        startFpsFromForMsec(fps, 0., for_ms, loop);
+    }
+    void startFpsForUsec(const double fps, const double for_us, const bool loop = false) {
+        startFpsFromForUsec(fps, 0., for_us, loop);
+    }
+    void startFpsForFrame(const double fps, const double for_frame, const bool loop = false) {
+        startFpsFromForFrame(fps, 0., for_frame, loop);
+    }
+
+    void startFpsFromForSec(const double fps, const double from_sec, const double for_sec, const bool loop = false) {
+        IntervalCounter::startIntervalFromForSec(fps_to_interval_us(fps) * 0.000001, from_sec, for_sec, loop);
+    }
+    void startFpsFromForMsec(const double fps, const double from_ms, const double for_ms, const bool loop = false) {
+        IntervalCounter::startIntervalFromForMsec(fps_to_interval_us(fps) * 0.001, from_ms, for_ms, loop);
+    }
+    void startFpsFromForUsec(const double fps, const double from_us, const double for_us, const bool loop = false) {
+        IntervalCounter::startIntervalFromForUsec(fps_to_interval_us(fps), from_us, for_us, loop);
+    }
+    void startFpsFromForFrame(const double fps, const double from_frame, const double for_frame, const bool loop = false) {
+        IntervalCounter::startIntervalUsecFromForCount(fps_to_interval_us(fps), from_frame, for_frame, loop);
+    }
+
+    double frame() {
         return count();
     }
 
-    inline void setFrameRate(const double fps) {
-        setInterval(fps_to_interval(fps));
+    void setOffsetFrame(const double frame) {
+        setOffsetUsec(getIntervalUsec() * frame);
     }
 
-    double getFrameRate() const { return 1000000. / IntervalCounter::getInterval(); }
+    void setFrameRate(const double fps) {
+        setIntervalUsec(fps_to_interval_us(fps));
+    }
+
+    double getFrameRate() const { return 1000000. / IntervalCounter::getIntervalUsec(); }
 
 private:
-    double fps_to_interval(const double fps) const {
+    double fps_to_interval_us(const double fps) const {
         if (fps <= 0.001) {
-            return 1. / 0.001;  // 1000[s] = 1,000,000,000[us]
+            return 1000000000.;  // 1000[s] = 1,000,000,000[us]
         } else if (fps >= 1000000.) {
-            return 1. / 1000000.;  // 0.000001[s] = 1[us]
+            return 1.;  // 0.000001[s] = 1[us]
         } else
-            return 1. / fps;
+            return 1000000. / fps;
     }
 };
 

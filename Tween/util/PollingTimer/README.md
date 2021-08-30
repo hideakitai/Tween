@@ -10,6 +10,7 @@ Arduino library to manage timing and event in a flexible way with polling
   - `FrameRateCounter`
   - `OneShotTimer`
 - Timer events with callback / lambda
+- Various APIs to control timers
 - 64bit support
 
 ## Usage
@@ -106,21 +107,22 @@ void loop() {
 
 ```C++
 void start();
-void startFrom(const double from_sec);
-void startFromMsec(const double from_ms);
-void startFromUsec(const double from_us);
-void startFor(const double for_sec);
-void startForMsec(const double for_ms);
-void startForUsec(const double for_us);
-void startFromFor(const double from_sec, const double for_sec);
-void startFromForMsec(const double from_ms, const double for_ms);
-void startFromForUsec(const double from_us, const double for_us);
-void startFromForUsec64(const int64_t from_us, const int64_t for_us);
-
 void stop();
 void play();
 void pause();
 void restart();
+void clear();
+
+void startFromSec(const double from_sec);
+void startFromMsec(const double from_ms);
+void startFromUsec(const double from_us);
+void startForSec(const double for_sec, const bool loop = false);
+void startForMsec(const double for_ms, const bool loop = false);
+void startForUsec(const double for_us, const bool loop = false);
+void startFromForSec(const double from_sec, const double for_sec, const bool loop = false);
+void startFromForMsec(const double from_ms, const double for_ms, const bool loop = false);
+void startFromForUsec(const double from_us, const double for_us, const bool loop = false);
+void startFromForUsec64(const int64_t from_us, const int64_t for_us, const bool loop = false);
 
 bool isRunning() const;
 bool isPausing() const;
@@ -137,8 +139,17 @@ double sec();
 
 double getOrigin() const;
 uint32_t getOverflow() const;
-double getOffset() const;
-double getDuration() const;
+
+double getOffsetUsec64() const;
+double getOffsetUsec() const;
+double getOffsetMsec() const;
+double getOffsetSec() const;
+
+int64_t getDurationUsec64() const;
+double getDurationUsec() const;
+double getDurationMsec() const;
+double getDurationSec() const;
+
 double getRemainingTime();
 double getRemainingLife();
 
@@ -152,10 +163,21 @@ void addOffsetUsec(const double us);
 void addOffsetMsec(const double ms);
 void addOffsetSec(const double sec);
 
+void setDurationUsec64(const int64_t us);
+void setDurationUsec(const double us);
+void setDurationMsec(const double ms);
+void setDurationSec(const double sec);
+
 void setTimeUsec64(const int64_t u);
 void setTimeUsec(const double u);
 void setTimeMsec(const double m);
 void setTimeSec(const double s);
+
+void setLoop(const bool b);
+bool isLoop() const;
+
+bool hasOffset() const;
+bool hasDuration() const;
 
 void onStart(const std::function<void(void)>& cb);
 void onPause(const std::function<void(void)>& cb);
@@ -174,33 +196,88 @@ bool hasEventOnStop() const;
 
 ```C++
 explicit IntervalCounter (const double sec = 0.);
-void startInterval(const double interval_sec);
-void startIntervalFrom(const double interval_sec, const double from_count);
-void startIntervalFor(const double for_count);
-void startIntervalFor(const double interval_sec, const double for_count);
-void startIntervalFromFor(const double interval_sec, const double from_count, const double for_count);
-void startOnceAfter(const double after_sec);
+
+void startFromCount(const double from_count);
+void startForCount(const double for_count, const bool loop = false);
+void startFromForCount(const double from_count, const double for_count, const bool loop = false);
+
+void startIntervalSec(const double interval_sec);
+void startIntervalMsec(const double interval_ms);
+void startIntervalUsec(const double interval_us);
+
+void startIntervalFromSec(const double interval_sec, const double from_sec);
+void startIntervalFromMsec(const double interval_ms, const double from_ms);
+void startIntervalFromUsec(const double interval_us, const double from_us);
+void startIntervalSecFromCount(const double interval_sec, const double from_count);
+void startIntervalMsecFromCount(const double interval_ms, const double from_count);
+void startIntervalUsecFromCount(const double interval_us, const double from_count);
+
+void startIntervalForSec(const double interval_sec, const double for_sec, const bool loop = false);
+void startIntervalForMsec(const double interval_ms, const double for_ms, const bool loop = false);
+void startIntervalForUsec(const double interval_us, const double for_us, const bool loop = false);
+void startIntervalSecForCount(const double interval_sec, const double for_count, const bool loop = false);
+void startIntervalMsecForCount(const double interval_ms, const double for_count, const bool loop = false);
+void startIntervalUsecForCount(const double interval_us, const double for_count, const bool loop = false);
+
+void startIntervalFromForSec(const double interval_sec, const double from_sec, const double for_sec, const bool loop = false);
+void startIntervalFromForMsec(const double interval_ms, const double from_ms, const double for_ms, const bool loop = false);
+void startIntervalFromForUsec(const double interval_us, const double from_us, const double for_us, const bool loop = false);
+void startIntervalSecFromForCount(const double interval_sec, const double from_count, const double for_count, const bool loop = false);
+void startIntervalMsecFromForCount(const double interval_ms, const double from_count, const double for_count, const bool loop = false);
+void startIntervalUsecFromForCount(const double interval_us, const double from_count, const double for_count, const bool loop = false);
+
+void startOnce();
+void startOnceAfterSec(const double after_sec);
+void startOnceAfterMsec(const double after_ms);
+void startOnceAfterUsec(const double after_us);
+
 void stop();
-void restart();
 double count();
-double getInterval() const;
-void setInterval(const double interval_sec);
-void setOffsetCount(const double offset);
+
+double getIntervalUsec64() const;
+double getIntervalUsec() const;
+double getIntervalMSec() const;
+double getIntervalSec() const;
+
+void setIntervalUsec64(const int64_t u64);
+void setIntervalUsec(const double us);
+void setIntervalMsec(const double ms);
+void setIntervalSec(const double sec);
+
+bool hasInterval() const;
+void setOffsetCount(const double count);
 void onUpdate(const std::function<void(void)>& f);
 bool hasEventOnUpdate() const;
 void removeEventOnUpdate();
-bool update();
+bool update();;
 ```
 
 ### `FrameRateCounter` only
 
 ```C++
 explicit FrameRateCounter(const double fps = 1000000.);
+
+void startFromFrame(const double from_frame);
+void startForFrame(const double for_frame, const bool loop = false);
+void startFromForFrame(const double from_frame, const double for_frame, const bool loop = false);
+
 void startFps(const double fps);
-void startFpsFrom(const double fps, const double from_frame);
-void startFpsFor(const double for_frame);
-void startFpsFor(const double fps, const double for_frame);
-void startFpsFromFor(const double fps, const double from_frame, const double for_frame);
+
+void startFpsFromSec(const double fps, const double from_sec);
+void startFpsFromMsec(const double fps, const double from_ms);
+void startFpsFromUsec(const double fps, const double from_us);
+void startFpsFromFrame(const double fps, const double from_frame);
+
+void startFpsForSec(const double fps, const double for_sec, const bool loop = false);
+void startFpsForMsec(const double fps, const double for_ms, const bool loop = false);
+void startFpsForUsec(const double fps, const double for_us, const bool loop = false);
+void startFpsForFrame(const double fps, const double for_frame, const bool loop = false);
+
+void startFpsFromForSec(const double fps, const double from_sec, const double for_sec, const bool loop = false);
+void startFpsFromForMsec(const double fps, const double from_ms, const double for_ms, const bool loop = false);
+void startFpsFromForUsec(const double fps, const double from_us, const double for_us, const bool loop = false);
+void startFpsFromForFrame(const double fps, const double from_frame, const double for_frame, const bool loop = false);
+
 double frame();
 void setFrameRate(const double fps);
 double getFrameRate() const;

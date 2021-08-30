@@ -238,7 +238,7 @@ Sequence<T>& offset(const double ms);
 ## Embedded Libraries
 
 - [Easing v0.1.0](https://github.com/hideakitai/Easing)
-- [PollingTimer v0.3.1](https://github.com/hideakitai/PollingTimer)
+- [PollingTimer v0.4.1](https://github.com/hideakitai/PollingTimer)
 - [ArxTypeTraits v0.2.1](https://github.com/hideakitai/ArxTypeTraits)
 - [ArxContainer v0.3.14](https://github.com/hideakitai/ArxContainer)
 - [ArxSmartPtr v0.2.1](https://github.com/hideakitai/ArxSmartPtr)
