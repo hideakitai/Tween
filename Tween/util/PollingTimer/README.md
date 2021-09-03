@@ -106,12 +106,12 @@ void loop() {
 ### `PollingTimer` (also available on all timer)
 
 ```C++
-void start();
-void stop();
-void play();
-void pause();
-void restart();
-void clear();
+virtual void start();
+virtual void stop();
+virtual void play();
+virtual void pause();
+virtual void restart();
+virtual void clear();
 
 void startFromSec(const double from_sec);
 void startFromMsec(const double from_ms);

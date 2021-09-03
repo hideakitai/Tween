@@ -38,7 +38,7 @@ protected:
 public:
     virtual ~PollingTimer() {}
 
-    void start() {
+    virtual void start() {
         startFromForUsec64(0, 0, false);
     }
 
@@ -82,7 +82,7 @@ public:
         b_loop = loop;
     }
 
-    void stop() {
+    virtual void stop() {
         prev_running = running;
         running = false;
         prev_us32 = 0;
@@ -93,7 +93,7 @@ public:
         // b_loop
     }
 
-    void play() {
+    virtual void play() {
         if (isPausing()) {
             prev_running = running;
             running = true;
@@ -117,7 +117,7 @@ public:
             restart();
     }
 
-    void pause() {
+    virtual void pause() {
         if (isRunning()) {
             microsec();
             prev_running = running;
@@ -133,12 +133,12 @@ public:
         }
     }
 
-    void restart() {
+    virtual void restart() {
         stop();
         startFromForUsec64(offset, duration, b_loop);
     }
 
-    void clear() {
+    virtual void clear() {
         prev_running = false;
         running = false;
         prev_us32 = 0;
@@ -156,6 +156,7 @@ public:
     bool hasStarted() const { return isRunning() && !prev_running; }
     bool hasPaused() const { return isPausing() && prev_running; }
     bool hasStopped() const { return isStopping() && prev_running; }
+    void releaseEventTrigger() { prev_running = running; }
 
     int64_t usec64() { return microsec(); }
     double usec() { return (double)microsec(); }
@@ -253,11 +254,13 @@ protected:
 
             int64_t t = elapsed() + offset;
             if ((t >= duration) && (duration != 0)) {
-                t = prev_us64 - origin + offset;
-                if (b_loop)
+                if (b_loop) {
+                    t = 0;
                     restart();
-                else
+                } else {
+                    t = prev_us64 - origin + offset;
                     stop();
+                }
             }
             return t;
         } else if (isPausing()) {

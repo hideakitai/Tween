@@ -112,9 +112,19 @@ public:
         startIntervalUsecForCount(after_us, 1);
     }
 
-    void stop() {
-        PollingTimer::stop();
+    virtual void stop() override {
         cnt = 0;
+        PollingTimer::stop();
+    }
+
+    virtual void restart() override {
+        cnt = 0;
+        PollingTimer::restart();
+    }
+
+    virtual void clear() override {
+        cnt = 0;
+        PollingTimer::clear();
     }
 
     double count() {
