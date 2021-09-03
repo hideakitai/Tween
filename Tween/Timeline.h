@@ -90,6 +90,10 @@ namespace tween {
         void mode(const Mode m) { setting.mode = m; }
         Mode mode() const { return setting.mode; }
 
+        void auto_erase(const bool b) {
+            for (auto& s : seqs) s.second->auto_erase(b);
+        }
+
         size_t size() const { return seqs.size(); }
 
         template <typename T>

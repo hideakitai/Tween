@@ -211,6 +211,8 @@ void clear();
 void mode(const Mode m);
 Mode mode() const;
 
+void auto_erase(const bool b);
+
 size_t size() const;
 
 template <typename T>
