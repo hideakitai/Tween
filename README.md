@@ -20,7 +20,7 @@ timeline.add(target)            // add sequence to timeline
     .init(0)                    // init target value (optional)
     .offset(1000)               // delay start without transaction (optional)
     .then(10, 5000)             // add transaction (change linearly)
-    .wait(1000)                 // add transaction (stay on the same value)
+    .hold(1000)                 // add transaction (stay on the same value)
     .then<Ease::Sine>(0, 500);  // add transaction with Easing
 ```
 
@@ -38,7 +38,7 @@ void setup() {
         .offset(1000)    // delay start 1000[ms] (optional)
         .then(10, 5000)  // to 10 in 5000[ms]
         .then(5, 5000)   // then to 5 in 5000[ms]
-        .wait(1000)      // then stops 1000[ms]
+        .hold(1000)      // then stops 1000[ms]
         .then(0, 5000);  // then to 0 in 5000[ms]
 
     timeline.start();
@@ -58,7 +58,7 @@ You can specify a easing type for each transition.
 timeline.add(f)
     .then<Ease::Sine>(10, 5000)
     .then<Ease::Elastic>(5, 5000)
-    .wait(1000)
+    .hold(1000)
     .then<Ease::Bounce>(0, 5000);
 ```
 
@@ -131,7 +131,7 @@ void setup() {
     timeline.add(v)
         .then(Vec2(10, 8), 5000)
         .then(Vec2(5, 10), 5000)
-        .wait(3000)
+        .hold(3000)
         .then<Ease::Bounce>(Vec2(0, 0), 7000);
 
     timeline.start();
@@ -183,7 +183,7 @@ for (size_t i = 0; i < 5; ++i) {
     timeline.add(value[i])
         .offset(i * 1000)
         .then(3, 1000)
-        .wait(2000);
+        .hold(2000);
 }
 ```
 
@@ -232,7 +232,7 @@ template <typename EasingType = Ease::Linear, typename U = T>
 auto then(const U& to, const double in = 0)
 -> typename std::enable_if<std::is_convertible<U, T>::value, Sequence<T>&>::type;
 
-Sequence<T>& wait(const double in);
+Sequence<T>& hold(const double in);
 
 Sequence<T>& offset(const double ms);
 ```

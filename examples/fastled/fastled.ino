@@ -10,13 +10,13 @@ void setup() {
 
     timeline.add(c)
         .init(CRGB::Black)
-        .wait(1000)
+        .hold(1000)
         .then(CRGB::White)
-        .wait(1000)
+        .hold(1000)
         .then(CRGB::Black)
         .then<Ease::Sine>(CRGB(64, 32, 128), 5000)
         .then<Ease::Expo>(CRGB(255, 255, 255), 5000)
-        .wait(3000)
+        .hold(3000)
         .then<Ease::Bounce>(CRGB(0, 0, 0), 5000);
 
     Serial.println("r, g, b");  // serial plotter label

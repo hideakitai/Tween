@@ -20,13 +20,13 @@ void setup() {
     timeline.add(a, b_auto_erase)
         .then(10, 2000)
         .then(5, 2000)
-        .wait(2000)  // this is the difference between a and b
+        .hold(2000)  // this is the difference between a and b
         .then(0, 2000);
 
     timeline.add(b)
         .then(10, 2000)
         .then(5, 2000)
-        .wait(3000)  // 1000 ms longer than a
+        .hold(3000)  // 1000 ms longer than a
         .then(0, 2000);
 
     Serial.println("a, b");  // serial plotter label

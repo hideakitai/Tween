@@ -21,7 +21,7 @@ void setup() {
             .offset(i * 1000)
             .then(4, 1000)
             .then(0, 1000)
-            .wait(3000);
+            .hold(3000);
     }
 
     Serial.println("f1, f2, f3, f4, f5");  // serial plotter label

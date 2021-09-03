@@ -102,7 +102,7 @@ namespace tween {
                 return *this;
             }
 
-            Sequence<T>& wait(const double in) {
+            Sequence<T>& hold(const double in) {
                 add_transition(trans_t {duration(), duration() + in, std::make_shared<Transition<T, Ease::Linear>>(target, prev_target, prev_target, in)});
                 return *this;
             }

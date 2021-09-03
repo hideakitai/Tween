@@ -14,7 +14,7 @@ void setup() {
         .init(0)
         .then(10, 5000)
         .then(5, 5000)   // and then Ease::Linear to 5 in 5000[ms]
-        .wait(3000)      // and stop 1000[ms]
+        .hold(3000)      // and stop 1000[ms]
         .then(0, 7000);  // and then Ease::Linear to 0 in 4000[ms]
 
     // Ease::Sine target value b to 10 in 5000[ms]
@@ -22,7 +22,7 @@ void setup() {
         .init(0)
         .then<Ease::Sine>(10, 5000)
         .then<Ease::Elastic>(5, 5000)  // and then Ease::Elastic to 5 in 5000[ms]
-        .wait(3000)                    // and stop 1000[ms]
+        .hold(3000)                    // and stop 1000[ms]
         .then<Ease::Bounce>(0, 7000);  // and then Ease::Bounce to 0 in 4000[ms]
 
     Serial.println("a, b");  // serial plotter label
