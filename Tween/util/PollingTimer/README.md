@@ -293,7 +293,7 @@ void start();
 
 ## Embedded Libraries
 
-- [ArxTypeTraits v0.2.1](https://github.com/hideakitai/ArxTypeTraits)
+- [ArxTypeTraits v0.2.3](https://github.com/hideakitai/ArxTypeTraits)
 - [TeensyDirtySTLErrorSolution v0.1.0](https://github.com/hideakitai/TeensyDirtySTLErrorSolution)
 
 ## Used Inside of
