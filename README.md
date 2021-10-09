@@ -242,7 +242,7 @@ Sequence<T>& offset(const double ms);
 - [Easing v0.1.0](https://github.com/hideakitai/Easing)
 - [PollingTimer v0.4.2](https://github.com/hideakitai/PollingTimer)
 - [ArxTypeTraits v0.2.1](https://github.com/hideakitai/ArxTypeTraits)
-- [ArxContainer v0.3.14](https://github.com/hideakitai/ArxContainer)
+- [ArxContainer v0.4.0](https://github.com/hideakitai/ArxContainer)
 - [ArxSmartPtr v0.2.1](https://github.com/hideakitai/ArxSmartPtr)
 - [TeensyDirtySTLErrorSolution v0.1.0](https://github.com/hideakitai/TeensyDirtySTLErrorSolution)
 
