@@ -142,6 +142,31 @@ void loop() {
 }
 ```
 
+## Add Transition to Sequence Dynamically
+
+You can add transitions to your sequence dynamically like this:
+
+```C++
+float a = 0;
+timeline.add(a).init(0).then(5, 1000);
+timeline.start();
+
+// do some stuff...
+
+// dynamically append transition to sequence of "a"
+timeline.append(a, 10, 5000);
+```
+
+This is same as following manual operation:
+
+```C++
+timeline[a].then(0, 5000);
+timeline.update_duration();
+```
+
+See `dynamic_append` example for the details.
+
+
 ## Control Timeline with Mode, Auto Erase, and Offset
 
 ### Timeline Mode
@@ -202,8 +227,14 @@ for (size_t i = 0; i < 5; ++i) {
 ```C++
 template <typename T>
 Sequence<T>& add(T& target, const bool b_auto_erase = false);
+template <typename T, typename EasingType = Ease::Linear, typename U = T>
+void append(const T& target, const U& to, const double in);
+template <typename T>
+void append(const T& target, const double in);
+void update_duration();
 
 void start();
+void restart();
 bool update();
 
 void clear();
@@ -216,9 +247,28 @@ void auto_erase(const bool b);
 size_t size() const;
 
 template <typename T>
-const Sequence<T>& operator[](const T& t);
-template <typename T>
-Sequence<T>& operator[](T& t);
+Sequence<T>& operator[](const T& t);
+```
+
+`Timeline` is derived from [FrameRateCounter](). So its methods to control timeline are also available. Some useful methods are listed below.
+
+```C++
+virtual void start();  // overridden by Tween::Timeline
+virtual void stop();
+virtual void play();
+virtual void pause();
+virtual void restart();  // overridden by Tween::Timeline
+virtual void clear();    // overridden by Tween::Timeline
+
+void startFromSec(const double from_sec);
+void startForSec(const double for_sec, const bool loop = false);
+void startFromForSec(const double from_sec, const double for_sec, const bool loop = false);
+
+bool isRunning() const;
+bool isPausing() const;
+bool isStopping() const;
+
+double sec();  // get current time of timeline
 ```
 
 ### `Sequence<T>`
