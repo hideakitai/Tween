@@ -26,7 +26,20 @@ namespace tween {
             }
         }
 
-        void start() {
+        template <typename T, typename EasingType = Ease::Linear, typename U = T>
+        auto append(const T& target, const U& to, const double in)
+            -> typename std::enable_if<std::is_convertible<U, T>::value>::type {
+            this->operator[](target).then(to, in);
+            update_duration();
+        }
+
+        template <typename T>
+        void append(const T& target, const double in) {
+            this->operator[](target).hold(in);
+            update_duration();
+        }
+
+        void update_duration() {
             // update total duration of this timeline
             auto it = seqs.begin();
             while (it != seqs.end()) {
@@ -34,7 +47,16 @@ namespace tween {
                     setting.duration = it->second->duration_with_offset();
                 ++it;
             }
+        }
+
+        void start() {
+            update_duration();
             this->FrameRateCounter::start();
+        }
+
+        void restart() {
+            update_duration();
+            this->FrameRateCounter::restart();
         }
 
         bool update() {
@@ -84,7 +106,7 @@ namespace tween {
         void clear() {
             for (auto& s : seqs) s.second->update(s.second->duration_with_offset());
             seqs.clear();
-            FrameRateCounter::stop();
+            FrameRateCounter::clear();
         }
 
         void mode(const Mode m) { setting.mode = m; }
@@ -97,11 +119,7 @@ namespace tween {
         size_t size() const { return seqs.size(); }
 
         template <typename T>
-        const Sequence<T>& operator[](const T& t) {
-            return *(Sequence<T>*)(seqs[(void*)&t].get());
-        }
-        template <typename T>
-        Sequence<T>& operator[](T& t) {
+        Sequence<T>& operator[](const T& t) {
             return *(Sequence<T>*)(seqs[(void*)&t].get());
         }
     };
