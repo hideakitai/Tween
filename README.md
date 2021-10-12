@@ -250,7 +250,7 @@ template <typename T>
 Sequence<T>& operator[](const T& t);
 ```
 
-`Timeline` is derived from [FrameRateCounter](). So its methods to control timeline are also available. Some useful methods are listed below.
+`Timeline` is derived from [FrameRateCounter](https://github.com/hideakitai/PollingTimer). So its methods to control timeline are also available. Some useful methods are listed below.
 
 ```C++
 virtual void start();  // overridden by Tween::Timeline
