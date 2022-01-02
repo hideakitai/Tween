@@ -23,7 +23,6 @@ namespace tween {
             T& ref;
             const T from;
             const T to;
-            const T diff;
             const double duration_ms;
             EasingFunc<EasingType> ease;
 
@@ -32,7 +31,6 @@ namespace tween {
             : ref(target)
             , from(from)
             , to(to)
-            , diff(to - from)
             , duration_ms(in) {
             }
 
@@ -58,7 +56,7 @@ namespace tween {
                 -> typename std::enable_if<
                     !std::is_same<U, CRGB>::value && !std::is_same<U, CHSV>::value,
                     U>::type {
-                return diff * ease.get(t / duration_ms) + from;
+                return (to - from) * ease.get(t / duration_ms) + from;
             }
 
             template <typename U = T>

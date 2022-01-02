@@ -62,6 +62,7 @@ namespace tween {
         protected:
             void add_transition(const trans_t& t) {
                 transitions.emplace_back(t);
+                transitions.shrink_to_fit();
                 duration_ms = 0;
                 for (const auto& t : transitions)
                     duration_ms += t.ref->duration();
