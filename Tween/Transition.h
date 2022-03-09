@@ -12,6 +12,8 @@ namespace ht {
 namespace tween {
 
     namespace transition {
+        using TransitionCallback = std::function<void(void)>;
+
         struct Base {
             virtual ~Base() {}
             virtual bool update(const double t) = 0;
@@ -25,24 +27,35 @@ namespace tween {
             const T to;
             const double duration_ms;
             EasingFunc<EasingType> ease;
+            bool b_finished {false};
+            TransitionCallback func {nullptr};
 
         public:
-            Transition(T& target, const T& from, const T& to, const double in)
+            Transition(T& target, const T& from, const T& to, const double in, const TransitionCallback& func)
             : ref(target)
             , from(from)
             , to(to)
-            , duration_ms(in) {
+            , duration_ms(in)
+            , func(func) {
             }
 
             virtual ~Transition() {}
 
             virtual bool update(const double t) override {
-                if (t < 0)
+                if (t < 0) {
                     ref = from;
-                else if (t >= duration_ms)
+                    b_finished = false;
+                } else if (t >= duration_ms) {
                     ref = to;
-                else {
+                    if (!b_finished) {
+                        b_finished = true;
+                        func();
+                    } else {
+                        b_finished = false;
+                    }
+                } else {
                     ref = lerp(t);
+                    b_finished = false;
                     return true;
                 }
                 return false;
@@ -77,6 +90,7 @@ namespace tween {
     template <typename T, typename EasingType>
     using Transition = transition::Transition<T, EasingType>;
     using TransitionRef = Ref<transition::Base>;
+    using TransitionCallback = transition::TransitionCallback;
 
 }  // namespace tween
 }  // namespace ht

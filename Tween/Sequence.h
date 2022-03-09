@@ -23,6 +23,7 @@ namespace tween {
             bool b_auto_erase {false};
             double duration_ms {0.};
             double offset_ms {0.};
+            size_t prev_idx {0};
 
         public:
             virtual ~Base() {}
@@ -36,12 +37,17 @@ namespace tween {
                 }
 
                 const size_t idx = from_time_to_index(ms);
+                if (idx == (prev_idx + 1)) {
+                    transitions[prev_idx].ref->update(ms - transitions[prev_idx].begin_ms);
+                }
                 if (idx >= transitions.size()) {
                     transitions.back().ref->update(transitions.back().end_ms);
                     return false;
                 }
 
                 transitions[idx].ref->update(ms - transitions[idx].begin_ms);
+
+                prev_idx = idx;
                 return true;
             }
 
@@ -96,15 +102,15 @@ namespace tween {
             }
 
             template <typename EasingType = Ease::Linear, typename U = T>
-            auto then(const U& to, const double in = 0)
+            auto then(const U& to, const double in = 0, const TransitionCallback& func = nullptr)
                 -> typename std::enable_if<std::is_convertible<U, T>::value, Sequence<T>&>::type {
-                add_transition(trans_t {duration(), duration() + in, std::make_shared<Transition<T, EasingType>>(target, prev_target, to, in)});
+                add_transition(trans_t {duration(), duration() + in, std::make_shared<Transition<T, EasingType>>(target, prev_target, to, in, func)});
                 prev_target = (T)to;
                 return *this;
             }
 
-            Sequence<T>& hold(const double in) {
-                add_transition(trans_t {duration(), duration() + in, std::make_shared<Transition<T, Ease::Linear>>(target, prev_target, prev_target, in)});
+            Sequence<T>& hold(const double in, const TransitionCallback& func = nullptr) {
+                add_transition(trans_t {duration(), duration() + in, std::make_shared<Transition<T, Ease::Linear>>(target, prev_target, prev_target, in, func)});
                 return *this;
             }
 
