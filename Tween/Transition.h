@@ -32,12 +32,7 @@ namespace tween {
 
         public:
             Transition(T& target, const T& from, const T& to, const double in, const TransitionCallback& func)
-            : ref(target)
-            , from(from)
-            , to(to)
-            , duration_ms(in)
-            , func(func) {
-            }
+            : ref(target), from(from), to(to), duration_ms(in), func(func) {}
 
             virtual ~Transition() {}
 
@@ -61,26 +56,23 @@ namespace tween {
                 return false;
             }
 
-            virtual double duration() const override { return duration_ms; }
+            virtual double duration() const override {
+                return duration_ms;
+            }
 
         private:
             template <typename U = T>
-            auto lerp(const double t)
-                -> typename std::enable_if<
-                    !std::is_same<U, CRGB>::value && !std::is_same<U, CHSV>::value,
-                    U>::type {
+            auto lerp(const double t) ->
+                typename std::enable_if<!std::is_same<U, CRGB>::value && !std::is_same<U, CHSV>::value, U>::type {
                 return (to - from) * ease.get(t / duration_ms) + from;
             }
 
             template <typename U = T>
-            auto lerp(const double t)
-                -> typename std::enable_if<
-                    std::is_same<U, CRGB>::value || std::is_same<U, CHSV>::value,
-                    U>::type {
+            auto lerp(const double t) ->
+                typename std::enable_if<std::is_same<U, CRGB>::value || std::is_same<U, CHSV>::value, U>::type {
                 double rgb[3];
                 const double rate = ease.get(t / duration_ms);
-                for (size_t i = 0; i < 3; ++i)
-                    rgb[i] = ((double)to[i] - (double)from[i]) * rate + (double)from[i];
+                for (size_t i = 0; i < 3; ++i) rgb[i] = ((double)to[i] - (double)from[i]) * rate + (double)from[i];
                 return U(rgb[0], rgb[1], rgb[2]);
             }
         };

@@ -27,8 +27,8 @@ namespace tween {
         }
 
         template <typename T, typename EasingType = Ease::Linear, typename U = T>
-        auto append(const T& target, const U& to, const double in, const TransitionCallback& func = nullptr)
-            -> typename std::enable_if<std::is_convertible<U, T>::value>::type {
+        auto append(const T& target, const U& to, const double in, const TransitionCallback& func = nullptr) ->
+            typename std::enable_if<std::is_convertible<U, T>::value>::type {
             this->operator[](target).then(to, in, func);
             update_duration();
         }
@@ -94,9 +94,14 @@ namespace tween {
             // check current time here to seek completely to the end of sequence
             if (ms > setting.duration) {
                 switch (setting.mode) {
-                    case Mode::REPEAT_TL: restart(); return true;
-                    case Mode::REPEAT_SQ: return true;
-                    default: stop(); return false;
+                    case Mode::REPEAT_TL:
+                        restart();
+                        return true;
+                    case Mode::REPEAT_SQ:
+                        return true;
+                    default:
+                        stop();
+                        return false;
                 }
             } else {
                 return true;
@@ -109,14 +114,20 @@ namespace tween {
             FrameRateCounter::clear();
         }
 
-        void mode(const Mode m) { setting.mode = m; }
-        Mode mode() const { return setting.mode; }
+        void mode(const Mode m) {
+            setting.mode = m;
+        }
+        Mode mode() const {
+            return setting.mode;
+        }
 
         void auto_erase(const bool b) {
             for (auto& s : seqs) s.second->auto_erase(b);
         }
 
-        size_t size() const { return seqs.size(); }
+        size_t size() const {
+            return seqs.size();
+        }
 
         template <typename T>
         Sequence<T>& operator[](const T& t) {
