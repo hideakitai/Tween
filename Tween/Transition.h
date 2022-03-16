@@ -45,8 +45,6 @@ namespace tween {
                     if (!b_finished) {
                         b_finished = true;
                         if (func) func();
-                    } else {
-                        b_finished = false;
                     }
                 } else {
                     ref = lerp(t);
