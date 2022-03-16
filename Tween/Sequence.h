@@ -40,16 +40,23 @@ namespace tween {
                 }
 
                 const size_t idx = from_time_to_index(ms);
-                if (idx == (prev_idx + 1)) {
-                    transitions[prev_idx].ref->update(transitions[prev_idx].end_ms);
-                } else if (idx >= transitions.size()) {
+                // finished
+                if (idx >= transitions.size()) {
                     transitions.back().ref->update(transitions.back().end_ms);
-                    prev_idx = (transitions.size() > 0) ? transitions.size() - 1 : 0;
+                    prev_idx = transitions.size() - 1;  // transitions.size() > 0 is guaranteed
                     return false;
                 }
+                // proceeded to next index
+                else if (idx == (prev_idx + 1)) {
+                    transitions[prev_idx].ref->update(transitions[prev_idx].end_ms);
+                }
+                // jumped to this index
+                else {
+                    // nothing to do now
+                }
 
+                // idx is always valid here
                 transitions[idx].ref->update(ms - transitions[idx].begin_ms);
-
                 prev_idx = idx;
                 return true;
             }
