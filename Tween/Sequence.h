@@ -29,7 +29,10 @@ namespace tween {
             virtual ~Base() {}
 
             bool update(const double curr_ms) {
-                if (transitions.empty()) return false;
+                if (transitions.empty()) {
+                    prev_idx = 0;
+                    return false;
+                }
 
                 double ms = curr_ms - offset_ms;
                 if (repeat()) {
@@ -38,10 +41,10 @@ namespace tween {
 
                 const size_t idx = from_time_to_index(ms);
                 if (idx == (prev_idx + 1)) {
-                    transitions[prev_idx].ref->update(ms - transitions[prev_idx].begin_ms);
-                }
-                if (idx >= transitions.size()) {
+                    transitions[prev_idx].ref->update(transitions[prev_idx].end_ms);
+                } else if (idx >= transitions.size()) {
                     transitions.back().ref->update(transitions.back().end_ms);
+                    prev_idx = (transitions.size() > 0) ? transitions.size() - 1 : 0;
                     return false;
                 }
 
