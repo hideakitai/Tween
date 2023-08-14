@@ -128,7 +128,7 @@ namespace tween {
             }
 
             template <typename EasingType = Ease::Linear, typename U = T>
-            auto then(const U& to, const double in = 0, const TransitionCallback& func = nullptr) ->
+            auto then(const U& to, const double in, const TransitionCallback& func) ->
                 typename std::enable_if<std::is_convertible<U, T>::value, Sequence<T>&>::type {
                 add_transition(trans_t {
                     duration(),
@@ -138,12 +138,22 @@ namespace tween {
                 return *this;
             }
 
-            Sequence<T>& hold(const double in, const TransitionCallback& func = nullptr) {
+            template <typename EasingType = Ease::Linear, typename U = T>
+            auto then(const U& to, const double in = 0) ->
+                typename std::enable_if<std::is_convertible<U, T>::value, Sequence<T>&>::type {
+                return this->then(to, in, [](){});
+            }
+
+            Sequence<T>& hold(const double in, const TransitionCallback& func) {
                 add_transition(trans_t {
                     duration(),
                     duration() + in,
                     std::make_shared<Transition<T, Ease::Linear>>(target, prev_target, prev_target, in, func)});
                 return *this;
+            }
+
+            Sequence<T>& hold(const double in) {
+                return this->hold(in, [](){});
             }
 
             Sequence<T>& offset(const double ms) {
