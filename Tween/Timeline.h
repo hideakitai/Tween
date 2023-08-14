@@ -27,16 +27,27 @@ namespace tween {
         }
 
         template <typename T, typename EasingType = Ease::Linear, typename U = T>
-        auto append(const T& target, const U& to, const double in, const TransitionCallback& func = nullptr) ->
+        auto append(const T& target, const U& to, const double in, const TransitionCallback& func) ->
             typename std::enable_if<std::is_convertible<U, T>::value>::type {
             this->operator[](target).then(to, in, func);
             update_duration();
         }
 
+        template <typename T, typename EasingType = Ease::Linear, typename U = T>
+        auto append(const T& target, const U& to, const double in) ->
+            typename std::enable_if<std::is_convertible<U, T>::value>::type {
+            this->append(target, to, in, [](){});
+        }
+
         template <typename T>
-        void append(const T& target, const double in, const TransitionCallback& func = nullptr) {
+        void append(const T& target, const double in, const TransitionCallback& func) {
             this->operator[](target).hold(in, func);
             update_duration();
+        }
+
+        template <typename T>
+        void append(const T& target, const double in) {
+            this->append(target, in, [](){});
         }
 
         void update_duration() {
