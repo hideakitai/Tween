@@ -141,7 +141,7 @@ namespace tween {
             template <typename EasingType = Ease::Linear, typename U = T>
             auto then(const U& to, const double in = 0) ->
                 typename std::enable_if<std::is_convertible<U, T>::value, Sequence<T>&>::type {
-                return this->then(to, in, [](){});
+                return this->then<EasingType, U>(to, in, [](){});
             }
 
             Sequence<T>& hold(const double in, const TransitionCallback& func) {
