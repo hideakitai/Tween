@@ -14,5 +14,13 @@
     "version": "0.3.9",
     "license": "MIT",
     "frameworks": "arduino",
-    "platforms": "*"
+    "platforms": "*",
+    "dependencies":
+    {
+        "hideakitai/ArxContainer": "*",
+        "hideakitai/ArxSmartPtr": "*",
+        "hideakitai/ArxTypeTraits": "*",
+        "hideakitai/Easing": "*",
+        "hideakitai/PollingTimer": "*"
+    }
 }

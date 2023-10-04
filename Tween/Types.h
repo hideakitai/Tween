@@ -8,9 +8,9 @@
 #elif defined(OF_VERSION_MAJOR)
 #include "ofMain.h"
 #endif
-#include "util/ArxTypeTraits/ArxTypeTraits.h"
-#include "util/ArxSmartPtr/ArxSmartPtr.h"
-#include "util/ArxContainer/ArxContainer.h"
+#include <ArxTypeTraits.h>
+#include <ArxSmartPtr.h>
+#include <ArxContainer.h>
 
 namespace ht {
 namespace tween {

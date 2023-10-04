@@ -101,4 +101,9 @@ jobs:
             - examples/transition_callback
           libraries: |
             - source-path: ./
+            - name: ArxContainer
+            - name: ArxSmartPtr
+            - name: ArxTypeTraits
+            - name: Easing
+            - name: PollingTimer
           verbose: true
