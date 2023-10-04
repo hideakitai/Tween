@@ -287,13 +287,15 @@ Sequence<T>& hold(const double in);
 Sequence<T>& offset(const double ms);
 ```
 
+## Dependent Libraries
+
+- [Easing](https://github.com/hideakitai/Easing)
+- [PollingTimer](https://github.com/hideakitai/PollingTimer)
+- [ArxTypeTraits](https://github.com/hideakitai/ArxTypeTraits)
+- [ArxContainer](https://github.com/hideakitai/ArxContainer)
+- [ArxSmartPtr](https://github.com/hideakitai/ArxSmartPtr)
 ## Embedded Libraries
 
-- [Easing v0.1.0](https://github.com/hideakitai/Easing)
-- [PollingTimer v0.4.3](https://github.com/hideakitai/PollingTimer)
-- [ArxTypeTraits v0.2.3](https://github.com/hideakitai/ArxTypeTraits)
-- [ArxContainer v0.4.0](https://github.com/hideakitai/ArxContainer)
-- [ArxSmartPtr v0.2.3](https://github.com/hideakitai/ArxSmartPtr)
 - [TeensyDirtySTLErrorSolution v0.1.0](https://github.com/hideakitai/TeensyDirtySTLErrorSolution)
 
 ## License

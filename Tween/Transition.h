@@ -3,7 +3,7 @@
 #define HT_TWEEN_TRANSITION_H
 
 #include "Types.h"
-#include "util/Easing/Easing.h"
+#include <Easing.h>
 
 struct CRGB;
 struct CHSV;

@@ -4,7 +4,7 @@
 
 #include "Types.h"
 #include "Sequence.h"
-#include "util/PollingTimer/FrameRateCounter.h"
+#include <FrameRateCounter.h>
 
 namespace ht {
 namespace tween {
