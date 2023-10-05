@@ -4,6 +4,14 @@ Tween library for Arduino with Robert Penner's easing functions
 
 ![tween.gif](assets/simple.gif)
 
+#### NOTE (>= v0.4.0) : DEPENDENT LIBRARIES REMOVED
+
+If you have already installed this library, please follow:
+
+- Cloned from GitHub (manually): Please install dependent libraries manually
+- Installed from library manager: re-install this library from library manager
+  - Dependent libraries will be installed automatically
+
 ## Overview
 
 This library is consists of three classes and each `Transition` has easing function:
