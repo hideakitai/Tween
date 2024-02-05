@@ -33,15 +33,13 @@ namespace tween {
     using Vec = std::vector<T>;
     template <typename T>
     using Ref = std::shared_ptr<T>;
-    using namespace std;
 #else
     template <typename T, typename U>
-    using Map = arx::map<T, U>;
+    using Map = arx::stdx::map<T, U>;
     template <typename T>
-    using Vec = arx::vector<T>;
+    using Vec = arx::stdx::vector<T, 60>;
     template <typename T>
     using Ref = std::shared_ptr<T>;
-    using namespace arx;
 #endif
 
 }  // namespace tween
