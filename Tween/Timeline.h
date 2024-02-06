@@ -21,7 +21,7 @@ namespace tween {
             } else {
                 auto p = std::make_shared<Sequence<T>>(target);
                 p->auto_erase(b_auto_erase);
-                seqs.insert(make_pair((void*)&target, (SequenceRef)p));
+                seqs.insert(std::make_pair((void*)&target, (SequenceRef)p));
                 return *p;
             }
         }
